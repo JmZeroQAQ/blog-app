@@ -11,3 +11,27 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.backgroundImage {
+  background-image: url('../public/images/backgroundimage.png');
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  z-index: -10;
+}
+
+.article-preview-head>div:nth-child(1) {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.article-preview-body>div {
+  height: 15rem;
+  white-space: wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
