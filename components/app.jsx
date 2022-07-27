@@ -6,6 +6,8 @@ import Article from './article';
 import Home from './Home';
 import Login from './login';
 import NotFound from './notFound';
+import ArticleContent from './articles/articleContent';
+import TextEditor from './articles/articleEditor';
 
 class App extends Component {
     state = {  } 
@@ -19,6 +21,8 @@ class App extends Component {
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
                         <Route path='/login' element={<Login />} />
+                        <Route path='/article/textEditor' element={<TextEditor />} />
+                        <Route path='/article/:user/:article_id' element={<ArticleContent />} />
                         <Route path='/404' element={<NotFound />} />
                         <Route path='*' element={<Navigate replace to='/404' />} />
                     </Routes>

@@ -6,7 +6,7 @@ class Card extends Component {
         return (
             <React.Fragment>
                 <div className='row'>
-                    <div style={this.props.style} className="card">
+                    <div style={this.props.style} className="card position-relative">
                         <div className="card-body">
                             {this.props.children}
                         </div>
