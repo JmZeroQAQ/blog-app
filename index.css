@@ -12,6 +12,22 @@ code {
     monospace;
 }
 
+table, tr, td, th {
+  border: 1px solid #6a737d !important;
+}
+
+td, tr {
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+}
+
+blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+}
+
 .backgroundImage {
   background-image: url('../public/images/backgroundimage.png');
   width: 100%;
@@ -102,9 +118,78 @@ code {
 .article-change-icon>span:hover {
   color: lightskyblue;
   transform: scale(1.2);
+  transition: 300ms;
 }
 
 .article-body {
   font-size: 16px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.article-editor-body {
+  margin-top: 1rem;
+}
+
+.artcile-editor-body-container {
+  height: 25rem;
+  border: 2px solid #D2D2D2;
+  box-sizing: border-box;
+  border-radius: 0px 0px 5px 5px;
+  background-color: #FBF1D3;
+}
+
+.article-editor-body-textEditor {
+  height: 100%;
+}
+
+.ace_scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: #DBDBDB;
+}
+
+.ace_scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #FF90D1;
+}
+
+.resizable {
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.article-editor-body-button {
+  width: 100%;
+  height: 4rem;
+  text-align: right;
+  margin-top: 25px;
+}
+
+.article-editor-btn-storage {
+  color: white;
+  font-weight: bold;
+  margin-right: 2rem;
+  width: 15%;
+  height: 3rem;
+  background-color: #FF90D1;
+  border: none;
+  border-radius: 6px;
+}
+
+.article-editor-btn-storage:hover {
+  background-color: #114E9F;
+}
+
+.article-editor-btn-submit {
+  color: white;
+  font-weight: bold;
+  width: 15%;
+  height: 3rem;
+  background-color: #FF90D1;
+  border: none;
+  border-radius: 6px;
+}
+
+.article-editor-btn-submit:hover {
+  background-color: #114E9F;
 }

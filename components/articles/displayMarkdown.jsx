@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { coyWithoutShadows } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
 
 class DisplayMarkDown extends Component {
     state = {  } 
@@ -10,6 +11,7 @@ class DisplayMarkDown extends Component {
             <React.Fragment>
                 <ReactMarkdown
                     children={this.props.article}
+                    remarkPlugins={[remarkGfm]}
                     components={{
                         code({node, inline, className, children, ...props}) {
                             const match = /language-(\w+)/.exec(className || '')

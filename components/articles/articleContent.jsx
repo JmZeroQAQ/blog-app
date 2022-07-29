@@ -1,23 +1,34 @@
 import React, { Component } from 'react';
 import Card from '../base_unit/card';
 import DisplayMarkDown from './displayMarkdown';
-import $ from 'jquery';
 
-const markdown = `## Here is some JavaScript code:
-~~~c++
-console.log('It works!')
-console.log('It works!')
-console.log('It works!')
+const markdown = `A paragraph with *emphasis* and **strong importance**.
 
+> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
+
+* Lists
+* [ ] todo
+* [x] done
+
+A table:
+
+| a | b | c |
+| - | - | - |
+| 1 | 2 | 2 |
+| 2 | 3 | 4 |
+
+~~~cpp
 #include <iostream>
+#include <cstdio>
+
+using namespace std;
 
 int main() {
 
     return 0;
 }
-~~~
 
-**hello world**
+~~~
 
 `
 

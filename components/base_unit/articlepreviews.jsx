@@ -33,7 +33,7 @@ class ArticlePreview extends Component {
         const style = {
             fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
             height: "304px",
-            backgroundColor: "rgba(249, 197, 207, 50%)",
+            backgroundColor: "rgba(251,241,211, 100%)",
             borderRadius: "5px",
             cursor: "pointer",
         };
