@@ -13,11 +13,11 @@ class TextEditor extends Component {
                     <div className="article-editor">
                         <div className="article-editor-head row">
                             <div className="article-editor-head-title col-md-7">
-                                <input type="text" className="form-control" placeholder='标题' />
+                                <input type="text" className="form-control" placeholder='标题' maxLength={25} />
                             </div>
 
                             <div className="article-editor-head-keyword col-md-5">
-                                <input type="text" className="form-control" placeholder='关键字, 逗号隔开' />
+                                <input type="text" className="form-control" placeholder='关键字, 逗号隔开' maxLength={13} />
                             </div>
                         </div>
 

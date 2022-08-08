@@ -5,9 +5,24 @@ class BackGround extends Component {
     render() { 
         return (
             <React.Fragment>
-                <div className='backgroundImage'></div>
+                <div style={this.getBackgroundStyle()}></div>
             </React.Fragment>
         );
+    }
+
+    getBackgroundStyle() {
+        let style = {
+            backgroundImage: "url('/images/backgroundimage.png')",
+            width: "100%",
+            height: "100%",
+            position: "fixed",
+            top: "0",
+            left: "0",
+            backgroundRepeat: "repeat",
+            zIndex: "-10",
+        }
+
+        return style;
     }
 }
  

@@ -4,13 +4,18 @@ import BackGround from './background';
 import { Route, Routes, Navigate} from 'react-router-dom'; 
 import Article from './article';
 import Home from './Home';
-import Login from './login';
 import NotFound from './notFound';
 import ArticleContent from './articles/articleContent';
 import TextEditor from './articles/articleEditor';
+import { GetLocalStorage } from '../getLocalStorage/getLocalStorage';
 
 class App extends Component {
     state = {  } 
+    
+    componentDidMount() {
+        GetLocalStorage();
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -20,7 +25,6 @@ class App extends Component {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
-                        <Route path='/login' element={<Login />} />
                         <Route path='/article/textEditor' element={<TextEditor />} />
                         <Route path='/article/:user/:article_id' element={<ArticleContent />} />
                         <Route path='/404' element={<NotFound />} />

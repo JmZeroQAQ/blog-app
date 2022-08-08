@@ -17,6 +17,7 @@ class Home extends Component {
         const style = {
             margin: "0 auto",
             minHeight: "35rem",
+            width: "85%",
             backgroundColor: "rgba(255, 255, 255, 0%)",
         };
 

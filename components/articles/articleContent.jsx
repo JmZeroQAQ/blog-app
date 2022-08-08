@@ -54,9 +54,12 @@ class ArticleContent extends Component {
                                 <span> , </span>
                                 <span>2022-7-27 15:44</span>
                             </div>
-                            <div className='article-change-icon'>
+
+                            <div onClick={this.handleClickModify} style={{cursor: "pointer"}} className='article-change-icon'>
                                 <span className="bi bi-pencil-fill"></span>
                             </div>
+
+
                             <hr style={{marginTop: "6px", color: "#999999"}} />
                         </div>
                         <div className="article-body">
@@ -81,6 +84,10 @@ class ArticleContent extends Component {
         };
     
         return style;
+    }
+
+    handleClickModify() {
+        console.log("12312");
     }
 }
  

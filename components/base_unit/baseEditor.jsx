@@ -36,6 +36,8 @@ class BaseEditor extends Component {
                     // 是否自动补全
                     wrapEnabled={this.props.wrapEnabled || true}
                     enableLiveAutocompletion={this.props.enableLiveAutocompletion || false}
+
+                    defaultValue = {this.props.value}
                 />
             </React.Fragment>
         );
