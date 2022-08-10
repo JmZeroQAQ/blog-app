@@ -25,7 +25,7 @@ class App extends Component {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
-                        <Route path='/article/textEditor' element={<TextEditor />} />
+                        <Route path='/textEditor' element={<TextEditor />} />
                         <Route path='/article/:user/:article_id' element={<ArticleContent />} />
                         <Route path='/404' element={<NotFound />} />
                         <Route path='*' element={<Navigate replace to='/404' />} />

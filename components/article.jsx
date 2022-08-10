@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Card from './base_unit/card';
 import ArticlePreview from './articles/articlepreviews';
+import SearchBar from './base_unit/searchBar';
 
 class Article extends Component {
     state = {
@@ -48,6 +49,9 @@ class Article extends Component {
                 <Card style={this.getCardStyle()}>
                     <h3>文章</h3>
                     <hr />
+                    
+                    <SearchBar />
+
                         {this.state.articles.map((e) => {
                             return (
                                 <ArticlePreview 
@@ -59,6 +63,8 @@ class Article extends Component {
                                 />
                             );
                         })}
+
+                        
                 </Card>
             </React.Fragment>
         );

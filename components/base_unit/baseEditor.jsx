@@ -10,9 +10,7 @@ import 'ace-builds/src-noconflict/theme-tomorrow';
 
 
 class BaseEditor extends Component {
-    state = {  
-        settings: {   }
-    } 
+    state = {  } 
 
     render() { 
         return (
@@ -37,7 +35,7 @@ class BaseEditor extends Component {
                     wrapEnabled={this.props.wrapEnabled || true}
                     enableLiveAutocompletion={this.props.enableLiveAutocompletion || false}
 
-                    defaultValue = {this.props.value}
+                    value=""
                 />
             </React.Fragment>
         );

@@ -81,6 +81,7 @@ class ArticleContent extends Component {
             margin: "0 auto",
             minHeight: "35rem",
             backgroundColor: "rgba(255, 255, 255, 75%)",
+            marginBottom: "2rem",
         };
     
         return style;

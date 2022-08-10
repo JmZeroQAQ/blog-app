@@ -4,7 +4,8 @@ import BaseEditor from '../base_unit/baseEditor';
 
 class TextEditor extends Component {
     state = {  } 
-    textValue=''
+
+    textValue = "";
 
     render() { 
         return (
@@ -32,6 +33,7 @@ class TextEditor extends Component {
                                         height='calc(100% - 10px)'
                                         wrapEnabled={false}
                                         onEditorChange={this.onEditorChange}
+                                        value={this.textValue}
                                     />
                                     <div className="resizable">
 
@@ -53,6 +55,7 @@ class TextEditor extends Component {
 
     onEditorChange = (res) => {
         this.textValue = res;
+        console.log(res);
     }
 
     getCardStyle = () => {
