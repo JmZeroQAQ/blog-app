@@ -1,44 +1,62 @@
 import React, { Component } from 'react';
 import Card from '../base_unit/card';
 import DisplayMarkDown from './displayMarkdown';
+import $ from 'jquery';
+import { TOKEN, OnTokenLoad } from '../token/identityToken';
+import { useParams } from 'react-router-dom';
 
-const markdown = `A paragraph with *emphasis* and **strong importance**.
-
-> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
-
-* Lists
-* [ ] todo
-* [x] done
-
-A table:
-
-| a | b | c |
-| - | - | - |
-| 1 | 2 | 2 |
-| 2 | 3 | 4 |
-
-~~~cpp
-#include <iostream>
-#include <cstdio>
-
-using namespace std;
-
-int main() {
-
-    return 0;
-}
-
-~~~
-
-`
-
-class ArticleContent extends Component {
+class  ArticleContent extends Component {
     state = {  
-        article_content: markdown,
+        content: "",
+        title: "CSS",
+        author: "JmZeroQAQ",
+        brief: "hello world",
+        time: "2020.4.12 14:00",
+        keywords: "docker, python",
+        visible: "all",
     } 
     
     componentDidMount() {
-        //ajax
+
+        OnTokenLoad(() => {
+            console.log(this.props.params.article_id);
+            $.ajax({
+                url: "http://192.168.43.142/article/get/",
+                type: "get",
+                data: {
+                    articleId: this.props.params.article_id,
+                },
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                success: (resp) => {
+                    if(resp.result === 'success') {
+                        let title = resp.title;
+                        let username = resp.username;
+                        let keywords = resp.keywords;
+                        let brief = resp.brief;
+                        let content = resp.content;
+                        let time = resp.time;
+                        let visible = resp.visible;
+
+                        this.setState({
+                            title: title,
+                            author: username,
+                            keywords: keywords,
+                            brief: brief,
+                            time: time,
+                            visible: visible,
+                            content: content,
+                        });
+                    }
+                    else {
+                        console.log(resp.result);
+                        this.setState({content: "# " + resp.result});
+                    }
+                }
+            });
+        });
     }
 
     render() { 
@@ -47,12 +65,14 @@ class ArticleContent extends Component {
                 <Card style={this.getCardStyle()}>
                     <div className="article-content">
                         <div className="article-head">
-                            <h4>CSS</h4>
+                            <h2 style={{fontWeight: "550", fontSize: "26px", marginTop: "10px"}}>{this.state.title}</h2>
                             <div className="article-head-message">
                                 <span>作者：</span>
-                                <span className='article-head-message-author'>JmzeroQAQ</span>
-                                <span> , </span>
-                                <span>2022-7-27 15:44</span>
+                                <span className='article-head-message-author'>{this.state.author}</span>
+                                <span> ,  </span>
+                                <span>{this.state.time}</span>
+                                <span> ,  </span>
+                                <span>所有人可见</span>
                             </div>
 
                             <div onClick={this.handleClickModify} style={{cursor: "pointer"}} className='article-change-icon'>
@@ -65,7 +85,7 @@ class ArticleContent extends Component {
                         <div className="article-body">
                             <div className="article-body-content">
                                 <DisplayMarkDown 
-                                    article={this.state.article_content}
+                                    article={this.state.content}
                                 />
                             </div>
                         </div>
@@ -79,9 +99,10 @@ class ArticleContent extends Component {
         const style = {
             width: "70%",
             margin: "0 auto",
-            minHeight: "35rem",
-            backgroundColor: "rgba(255, 255, 255, 75%)",
+            minHeight: "40rem",
+            backgroundColor: "rgba(255, 255, 255, 100%)",
             marginBottom: "2rem",
+            boxShadow: "2px 1px 12px #DDDDDD",
         };
     
         return style;
@@ -92,4 +113,10 @@ class ArticleContent extends Component {
     }
 }
  
-export default ArticleContent;
+//eslint-disable-next-line
+export default (props) => (
+    <ArticleContent
+        {...props}
+        params={useParams()}
+    />
+);

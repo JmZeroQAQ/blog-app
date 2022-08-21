@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Login from './login';
 import { connect } from 'react-redux';
 import NavBarUser from './navbarUser';
+import $ from 'jquery';
+import {loginModal} from './base_unit/Modal/loginModal';
 
 
 class NavBar extends Component {
@@ -12,30 +13,31 @@ class NavBar extends Component {
 
     componentDidMount() {
         let url = window.location.href;
-        if(url.search("/article") !== -1) {
-            this.setState({active: "article"});
-        }
+        let active = "home";
+        if(url.search("/article") !== -1)
+            active = "article";
+        else if(url.search("Editor") !== -1)
+            active = "editor";
+        
+        this.setState({active,});
     }
 
     render() { 
         return (
             <React.Fragment>
-                <nav className="navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(255deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px"}}>
+                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(255deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:11, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
                     <div className="container" style={{width: "75%"}}>
-                        <Link onClick={(e) => this.handleOnClickChangeActive('home')} className="navbar-link-item navbar-brand active" to="/">首页</Link>
+                        <Link style={this.getActiveStyle('home')} onClick={(e) => this.handleOnClickChangeActive('home')} className="navbar-link-item navbar-brand active" to="/">首页</Link>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                         </button>
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li style={this.getActiveStyle('home')} onClick={(e) => this.handleOnClickChangeActive('home')} className="nav-item">
-                                    <Link className="navbar-link-item nav-link active" to="/">Home</Link>
-                                </li>
                                 <li style={this.getActiveStyle('article')} onClick={(e) => this.handleOnClickChangeActive('article')} className="nav-item">
                                     <Link className="navbar-link-item nav-link active" to="/article">文章</Link>
                                 </li>
 
-                                {this.getArticleEditor()}
+                                {this.getLoginNavbar()}
                             </ul>
 
                             <ul className="navbar-nav mb-2 mb-lg-0">
@@ -52,7 +54,9 @@ class NavBar extends Component {
         if(this.props.userStat === 0) {
             return (
                 <li className="nav-item">
-                    <Login />
+                    <div onClick={this.handleClickLogin} className="login-item" style={{cursor: "pointer"}}>
+                        登录
+                    </div>
                 </li>
             );
         }
@@ -63,6 +67,14 @@ class NavBar extends Component {
             );
         }
     }
+
+    handleClickLogin = () => {
+        loginModal.showModal();
+
+        $('.modal-login').show();
+        $('.modal-register').hide();
+    }
+
 
     getActiveStyle(item) {
         let style = {
@@ -83,12 +95,18 @@ class NavBar extends Component {
         this.setState({active: item})
     }
 
-    getArticleEditor() {
+    getLoginNavbar() {
         if(this.props.userStat === 1) {
             return (
-                <li style={this.getActiveStyle('editor')} onClick={(e) => this.handleOnClickChangeActive('editor')} className="nav-item">
+                <React.Fragment>
+                    <li style={this.getActiveStyle('editor')} onClick={(e) => this.handleOnClickChangeActive('editor')} className="nav-item">
                     <Link className="navbar-link-item nav-link active" to="/textEditor">新建文章</Link>
-                </li>
+                    </li>
+
+                    <li style={this.getActiveStyle('picture')} onClick={(e) => this.handleOnClickChangeActive('picture')} className="nav-item">
+                    <Link className="navbar-link-item nav-link active" to="/picture">图床</Link>
+                    </li>
+                </React.Fragment>
             );
         }
     }

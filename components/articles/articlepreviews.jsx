@@ -16,7 +16,7 @@ class ArticlePreview extends Component {
                                 {this.props.title}
                             </div>
 
-                            <div className="article-simple-content" style={{fontSize: "14px", marginBottom: "4px"}}>
+                            <div className="article-brief" style={{fontSize: "14px", marginBottom: "4px"}}>
                                     <span style={{fontWeight: 'lighter'}}> {this.props.content} </span>
                             </div>
                         </div>
@@ -25,14 +25,14 @@ class ArticlePreview extends Component {
 
                         <div className="article-preview-body">
                             <div className="article-message" style={this.get_article_message_style()}>
-                                <span style={{fontWeight: 'bold', marginRight: "4px"}}>分类 : </span>
-                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>docker </span>
+                                <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>关键字 : </span>
+                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.keywords}</span>
 
-                                    <span style={{fontWeight: 'bold', marginRight: "4px"}}>Author : </span>
+                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>Author : </span>
                                     <img style={{width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", marginRight: "4px"}} src='/images/avatar.jpg' alt="头像" />
                                     <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.author} </span>
 
-                                    <span style={{fontWeight: 'bold', marginRight: "4px"}}>Time : </span>
+                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>Time : </span>
                                     <span style={{fontWeight: 'lighter'}}>{this.props.time}</span>
                             </div>
                         </div>
@@ -42,11 +42,11 @@ class ArticlePreview extends Component {
         );
     }
 
-    handleClickNewBlank() {
-        window.open("/article/jmzero/1");
+    handleClickNewBlank = () => {
+        window.open(`/article/${this.props.author}/${this.props.aid}/`);
     }
 
-    handleClickModify(ev) {
+    handleClickModify = (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
 

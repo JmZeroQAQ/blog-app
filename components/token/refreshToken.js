@@ -5,6 +5,7 @@ import { ACTIONS } from "../redux/action";
 
 
 let refreshEventId = -1;
+let ajaxInit = -1;
 
 
 const refreshToken = () => {
@@ -17,6 +18,7 @@ const refreshToken = () => {
 
         success: (resp) => {
             TOKEN.access_token = resp.access;
+            console.log(TOKEN);
         },
 
         // 刷新令牌过期了
@@ -24,7 +26,7 @@ const refreshToken = () => {
             console.log(resp);
             TOKEN.access_token = "";
             TOKEN.refresh_token = "";
-            localStorage.removeItem("refresh_token");
+            // localStorage.removeItem("refresh_token");
             if(refreshEventId !== -1) {
                 clearInterval(refreshEventId);
                 console.log("清除周期函数");
@@ -37,18 +39,37 @@ const refreshToken = () => {
 };
 
 const add_listening_events_refresh = () => {
-    refreshToken();
 
-    if(TOKEN.refresh_token !== "") {
-        localStorage.setItem("refresh_token", TOKEN.refresh_token);
-        store.dispatch({type: ACTIONS.changeUserStat, newStat: 1});
+    ajaxInit =  $.ajax({
+        url: "http://192.168.43.142/token/refresh/",
+        type: "post",
+        data: {
+            refresh: TOKEN.refresh_token,
+        },
 
-        refreshEventId = setInterval(() => {
-            refreshToken();
-        }, 4.5 * 60 * 1000);// unit: ms
-    }
+        success: (resp) => {
+            TOKEN.access_token = resp.access;
+
+            localStorage.setItem("refresh_token", TOKEN.refresh_token);
+            store.dispatch({type: ACTIONS.changeUserStat, newStat: 1});
+
+            refreshEventId = setInterval(() => {
+                refreshToken();
+            }, 4.5 * 60 * 1000);// unit: ms
+        },
+
+        // 刷新令牌过期了
+        error: (resp) => {
+            console.log(resp);
+            TOKEN.access_token = "";
+            TOKEN.refresh_token = "";
+
+            store.dispatch({type: ACTIONS.changeUserStat, newStat: 0});
+        },
+    })
 };
 
 export {
     add_listening_events_refresh,
+    ajaxInit,
 }

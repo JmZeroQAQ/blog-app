@@ -18,7 +18,8 @@ class Home extends Component {
             margin: "0 auto",
             minHeight: "35rem",
             width: "85%",
-            backgroundColor: "rgba(255, 255, 255, 0%)",
+            backgroundColor: "rgba(255, 255, 255, 100%)",
+            boxShadow: "2px 1px 12px #DDDDDD",
         };
 
         return style;

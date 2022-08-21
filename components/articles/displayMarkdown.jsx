@@ -22,6 +22,7 @@ class DisplayMarkDown extends Component {
                                 style={ coyWithoutShadows }
                                 language={match[1]}
                                 PreTag="div"
+                                tabIndex={0}
                                 {...props}
                             />
                             ) : (

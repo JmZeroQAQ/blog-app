@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import NavBar from './navBar';
 import BackGround from './background';
 import { Route, Routes, Navigate} from 'react-router-dom'; 
+import Login from './login';
 import Article from './article';
 import Home from './Home';
 import NotFound from './notFound';
@@ -10,9 +11,9 @@ import TextEditor from './articles/articleEditor';
 import { GetLocalStorage } from '../getLocalStorage/getLocalStorage';
 
 class App extends Component {
-    state = {  } 
-    
-    componentDidMount() {
+    constructor(props) {
+        super(props);
+        this.state = {  };
         GetLocalStorage();
     }
 
@@ -20,6 +21,7 @@ class App extends Component {
         return (
             <React.Fragment>
                 <NavBar />
+                <Login />
                 <BackGround />
                 <div className="container" style={this.get_container_style()}>
                     <Routes>
@@ -37,7 +39,7 @@ class App extends Component {
 
     get_container_style = () => {
         const style = {
-            marginTop: "15px",
+            marginTop: "calc(3.8rem + 15px)",
             minHeight: "42rem",
         }
 

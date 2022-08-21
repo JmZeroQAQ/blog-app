@@ -4,7 +4,7 @@ import { TOKEN } from './token/identityToken';
 import { add_listening_events_refresh } from './token/refreshToken';
 import { ACTIONS } from './redux/action';
 import { connect } from 'react-redux';
-import { loginModal } from './base_unit/LoginModal/loginModal';
+import { loginModal } from './base_unit/Modal/loginModal';
 
 class Login extends Component {
     state = {  
@@ -14,15 +14,11 @@ class Login extends Component {
     render() { 
         return (
             <React.Fragment>
-                <div onClick={this.handleClickLogin} style={{cursor: "pointer"}}>
-                    登录
-                </div>
-
                 <div className="modal fade" id="loginModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" style={{marginTop: "10%"}}>
                         <div className="modal-content modal-login">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">登录</h5>
+                                <h5 className="modal-title">登录</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
@@ -50,7 +46,7 @@ class Login extends Component {
 
                         <div className="modal-content modal-register">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">注册</h5>
+                                <h5 className="modal-title">注册</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
@@ -80,10 +76,7 @@ class Login extends Component {
     }
 
     handleClickLogin() {
-        loginModal.showModal();
 
-        $('.modal-login').show();
-        $('.modal-register').hide();
     }
 
     // 显示注册

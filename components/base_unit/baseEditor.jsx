@@ -35,7 +35,7 @@ class BaseEditor extends Component {
                     wrapEnabled={this.props.wrapEnabled || true}
                     enableLiveAutocompletion={this.props.enableLiveAutocompletion || false}
 
-                    value=""
+                    value={this.props.value}
                 />
             </React.Fragment>
         );

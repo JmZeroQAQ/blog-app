@@ -1,8 +1,34 @@
 import React, { Component } from 'react';
 import { Logout } from './token/clearToken';
+import $ from 'jquery';
+import { TOKEN } from './token/identityToken';
 
 class NavBarUser extends Component {
-    state = {  } 
+    state = {  
+        username: "",
+    } 
+
+    componentDidMount() {
+        // console.log("TOKEN", TOKEN.access_token, TOKEN.refresh_token);
+        $.ajax({
+            url: "http://192.168.43.142/user/getinfo/",
+            type: "get",
+            headers: {
+                'Authorization': "Bearer " + TOKEN.access_token,
+            },
+
+            success: (resp) => {
+                if(resp.result === "success") {
+                    let usernmae = resp.username;
+                    this.setState({username: usernmae});
+                }
+                else {
+                    console.log("获取用户信息失败");
+                }
+            }, 
+        });
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -13,7 +39,7 @@ class NavBarUser extends Component {
                     </a>
                     <ul className="dropdown-menu navbar-user-dropdown" style={{margin: "0"}}>
                         <li style={{fontSize: "16px", marginLeft: "20px", fontWeight: "bold", userSelect: "none"}}><div>
-                            JmZeroQAQ
+                            {this.state.username || "JmZeroQAQ"}
                         </div></li>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
                         <li className='navbar-user-dropdown-item'><div>我的空间</div></li>
