@@ -29,7 +29,7 @@ class NoticeToast extends Component {
             backgroundClip: "border-box",
             borderRadius: "4px",
             border: "1px solid rgba(0, 0, 0, .1)",
-            zIndex: "11",
+            zIndex: "1060",
             right: "16px",
             bottom: "18px",
         }

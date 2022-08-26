@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Logout } from './token/clearToken';
 import $ from 'jquery';
 import { TOKEN } from './token/identityToken';
+import { ACTIONS } from './redux/action';
+import { connect } from 'react-redux';
 
 class NavBarUser extends Component {
-    state = {  
-        username: "",
-    } 
+    state = {  } 
 
     componentDidMount() {
         // console.log("TOKEN", TOKEN.access_token, TOKEN.refresh_token);
@@ -19,8 +19,8 @@ class NavBarUser extends Component {
 
             success: (resp) => {
                 if(resp.result === "success") {
-                    let usernmae = resp.username;
-                    this.setState({username: usernmae});
+                    let username = resp.username;
+                    this.props.setUserInfo({username});
                 }
                 else {
                     console.log("获取用户信息失败");
@@ -39,11 +39,12 @@ class NavBarUser extends Component {
                     </a>
                     <ul className="dropdown-menu navbar-user-dropdown" style={{margin: "0"}}>
                         <li style={{fontSize: "16px", marginLeft: "20px", fontWeight: "bold", userSelect: "none"}}><div>
-                            {this.state.username || "JmZeroQAQ"}
+                            {this.props.userInfo.username || "JmZeroQAQ"}
                         </div></li>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
                         <li className='navbar-user-dropdown-item'><div>我的空间</div></li>
                         <li className='navbar-user-dropdown-item'><div>文章后台</div></li>
+                        <li className='navbar-user-dropdown-item'><div>图床</div></li>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
                         <li className='navbar-user-dropdown-item'><div onClick={this.handleClickLogout}>退出</div></li>
                     </ul>
@@ -56,5 +57,20 @@ class NavBarUser extends Component {
         Logout();
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        userInfo: state.userInfo
+    };
+}
+
+const mapDispatchToProps = {
+    setUserInfo: (userInfo) => {
+        return {
+            type: ACTIONS.setUserInfo,
+            username: userInfo.username,
+        };
+    }
+}
  
-export default NavBarUser;
+export default connect(mapStateToProps, mapDispatchToProps)(NavBarUser);

@@ -25,7 +25,7 @@ class NavBar extends Component {
     render() { 
         return (
             <React.Fragment>
-                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(255deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:11, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
+                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(45deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:11, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
                     <div className="container" style={{width: "75%"}}>
                         <Link style={this.getActiveStyle('home')} onClick={(e) => this.handleOnClickChangeActive('home')} className="navbar-link-item navbar-brand active" to="/">首页</Link>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,7 +112,7 @@ class NavBar extends Component {
     }
 }
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state) => {
     return {
         userStat: state.userStat,
     }

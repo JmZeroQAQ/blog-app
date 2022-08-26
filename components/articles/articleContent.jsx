@@ -65,7 +65,7 @@ class  ArticleContent extends Component {
                 <Card style={this.getCardStyle()}>
                     <div className="article-content">
                         <div className="article-head">
-                            <h2 style={{fontWeight: "550", fontSize: "26px", marginTop: "10px"}}>{this.state.title}</h2>
+                            <h2 style={{color: "#24292F", fontSize: "30px", marginTop: "10px"}}>{this.state.title}</h2>
                             <div className="article-head-message">
                                 <span>作者：</span>
                                 <span className='article-head-message-author'>{this.state.author}</span>
@@ -83,7 +83,7 @@ class  ArticleContent extends Component {
                             <hr style={{marginTop: "6px", color: "#999999"}} />
                         </div>
                         <div className="article-body">
-                            <div className="article-body-content">
+                            <div className="article-body-content markdown-body">
                                 <DisplayMarkDown 
                                     article={this.state.content}
                                 />

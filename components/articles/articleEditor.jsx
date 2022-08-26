@@ -1,46 +1,52 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Card from '../base_unit/card';
 import BaseEditor from '../base_unit/baseEditor';
 import $ from 'jquery';
 import { TOKEN } from '../token/identityToken';
 import NoticeToast from './../base_unit/noticeToast';
 import PreviewModal from '../base_unit/previewModal';
+import { PREVIEW_MODAL } from '../base_unit/Modal/previewModal';
+import { shortcutKey, placeholder } from '../base_unit/markDown/setting';
+import EditorResizable from './editorResizable';
 
 class TextEditor extends Component {
     state = {  
-        flush: true,
+        textValue: "",
         notice: false,
         errorNotice: false,
         errorMessage: "",
+        editorHeight: 416,
+        preview: false,
     } 
-
-    textValue = "";
+    // 编辑器的实例对象
+    refArticleEditor = React.createRef();
 
     componentDidMount() {
-        if(localStorage.getItem("EditorTitle")) {
-            $('.articleEditor-title').val(localStorage.getItem("EditorTitle"));
-        }
+        let title, keywords, textValue;
 
-        if(localStorage.getItem("Editorkeywords")) {
-            $('.articleEditor-keywords').val(localStorage.getItem("Editorkeywords"));
-        }
-
-        if(localStorage.getItem("EditorValue")) {
-            this.textValue = localStorage.getItem("EditorValue");
-        }
+        title = localStorage.getItem("EditorTitle") || "";
+        keywords = localStorage.getItem("Editorkeywords") || "";
+        textValue = localStorage.getItem("EditorValue") || "";
 
         // localStorage.removeItem("EditorTitle");
         // localStorage.removeItem("Editorkeywords");
         // localStorage.removeItem("EditorValue");
 
-        this.setState({flush: true});
+        $('.articleEditor-title').val(title);
+        $('.articleEditor-keywords').val(keywords);
+        this.setState({textValue: textValue}, () => {
+            // 当上次保存的内容加载完后，选中所有内容
+            let e = this.refArticleEditor.current.editor;
+            e.selectAll();
+        });
     }
 
     render() { 
         return (
             <React.Fragment>
                 <Card style={this.getCardStyle()}>
-                    <div className="article-editor">
+                    <div onKeyDown={(e) => this.handleKeydownPreview(e)} style={{outline: "none"}} tabIndex='-1' className="article-editor">
                         <div className="article-editor-head row">
                             <div className="article-editor-head-title col-md-7">
                                 <input type="text" className="form-control articleEditor-title" placeholder='标题' maxLength={30} />
@@ -52,21 +58,26 @@ class TextEditor extends Component {
                         </div>
 
                         <div className="article-editor-body">
-                            <div className="artcile-editor-body-container">
-                                <div className="article-editor-body-textEditor">
+                            <div style={this.getEditorContainerStyle()} className="artcile-editor-body-container">
+                                <div style={{height: "100%"}} className="article-editor-body-textEditor">
                                     <BaseEditor 
+                                        newref={this.refArticleEditor}
                                         theme='solarized_light'
                                         mode='markdown'
                                         fontSize={18}
+                                        value={this.state.textValue}
                                         width='100%'
-                                        height='calc(100% - 10px)'
+                                        height={`${this.state.editorHeight - 14}px`}
                                         wrapEnabled={false}
                                         onEditorChange={this.onEditorChange}
-                                        value={this.textValue}
+                                        shortcutKey={shortcutKey}
+                                        placeholder={placeholder}
                                     />
-                                    <div className="resizable">
 
-                                    </div>
+                                    <EditorResizable 
+                                        changeEditorHeight={this.changeEditorHeight}
+                                        editorHeight={this.state.editorHeight}
+                                    />
 
                                 </div>
                             </div>
@@ -81,13 +92,31 @@ class TextEditor extends Component {
 
                     {this.getNotice()}
                     {this.getErrorNotice()}
-                    
-                    <PreviewModal
-                        content={this.textValue}
-                    />
+
+                    {this.getPreview()}
                 </Card>
             </React.Fragment>
         );
+    }
+
+    changeEditorHeight = (dy) => {
+        this.setState({editorHeight: this.state.editorHeight + dy});
+    }
+
+    getPreview() {
+        if(this.state.preview)
+            return (
+                <PreviewModal
+                    content={this.state.textValue}
+                    offPreview={this.offPreview}
+                    handleClickStorage={this.handleClickStorage}
+                    handleClickSubmit={this.handleClickSubmit}
+                />
+            );
+    }
+
+    offPreview = () => {
+        this.setState({preview: false});
     }
 
     getNotice() {
@@ -118,7 +147,7 @@ class TextEditor extends Component {
     }
 
     onEditorChange = (res) => {
-        this.textValue = res;
+        this.setState({textValue: res});
     }
 
     getCardStyle = () => {
@@ -133,8 +162,20 @@ class TextEditor extends Component {
         return style;
     }
 
+    getEditorContainerStyle() {
+        let style = {
+            height: `${this.state.editorHeight.toString()}px`,
+            border: "2px solid #D2D2D2",
+            boxSizing: "border-box",
+            borderRadius: "0px 0px 5px 5px",
+            backgroundColor: "#FBF1D3",
+        }
+
+        return style;
+    }
+
     getBrief() {
-        let str = this.textValue + '\n';
+        let str = this.state.textValue + '\n';
         str = str.substring(0, Math.min(str.indexOf('\n'), 60));
 
         let brief = str.replace(/[`#*[\]{}~><()@]/g, "");
@@ -143,10 +184,11 @@ class TextEditor extends Component {
         return brief;
     }
 
+
     handleClickSubmit = () => {
         let title = $('.articleEditor-title').val();
         let keywords = $('.articleEditor-keywords').val();
-        let content = this.textValue + '\n';
+        let content = this.state.textValue + '\n';
         let brief = this.getBrief();
         let visible = "self";
 
@@ -174,6 +216,13 @@ class TextEditor extends Component {
                         }, 5 * 1000); // unit: ms
                     }
                 }
+                else {
+                    let articleId = res.articleId;
+                    if(articleId !== '') {
+                        let username = this.props.userInfo.username;
+                        window.location.href = `/article/${username}/${articleId}/`;
+                    }
+                }
             },
         });
     }
@@ -184,7 +233,7 @@ class TextEditor extends Component {
 
         localStorage.setItem("EditorTitle", title)
         localStorage.setItem("Editorkeywords", keywords);
-        localStorage.setItem("EditorValue", this.textValue);
+        localStorage.setItem("EditorValue", this.state.textValue);
 
         if(this.state.notice === false) {
             this.setState({notice: true});
@@ -198,6 +247,20 @@ class TextEditor extends Component {
         if(this.state.notice === true)
             this.setState({notice: false});
     }
+
+    // 打开预览
+    handleKeydownPreview = (e) => {
+        if(e.ctrlKey && e.key === 'q') {
+            // setState callback 当渲染完成后调用
+            this.setState({preview: true}, () => PREVIEW_MODAL.showModal());
+        }
+    }
 }
 
-export default TextEditor;
+const mapStateToProps = (state) => {
+    return {
+        userInfo: state.userInfo,
+    };
+}
+
+export default connect(mapStateToProps) (TextEditor);
