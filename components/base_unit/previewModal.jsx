@@ -3,7 +3,14 @@ import DisplayMarkDown from './../articles/displayMarkdown';
 import { PREVIEW_MODAL} from '../base_unit/Modal/previewModal';
 
 class PreviewModal extends Component {
-    state = {  } 
+    state = {  
+        articleContent: "",
+    } 
+
+    componentDidMount() {
+        this.setState({articleContent: this.props.content.length < 90000 ? this.props.content : "# 文章内容过长"});
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -16,12 +23,12 @@ class PreviewModal extends Component {
                             </div>
                             <div className="modal-body modal-editor-preview markdown-body" tabIndex={0} style={{outline: "none"}}>
                                 <DisplayMarkDown 
-                                    article = {this.props.content.length < 27001 ? this.props.content : "# 文章长度应小于27001"}
+                                    article = {this.state.articleContent}
                                 />
                             </div>
                             <div className="modal-footer">
                                 <button onClick={this.props.handleClickStorage} className='article-editor-btn-storage' style={{width: "12%"}}>保存</button>
-                                <button onClick={this.props.handleClickSubmit} className='article-editor-btn-submit' style={{width: "12%"}}>提交</button>
+                                <button onClick={this.props.handleClickSubmit} className='article-editor-btn-submit' style={{width: "12%"}}>{this.props.mode !== 'modify' ? "保存" : "修改"}</button>
                             </div>
                         </div>
                     </div>

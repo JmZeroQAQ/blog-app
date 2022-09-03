@@ -11,7 +11,7 @@ class ModifyIcon extends Component {
                 <div style={this.getDivStyle()}>
                     <span 
                     onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} 
-                    onClick={this.handleClickModify}
+                    onClick={this.props.handleClickModify}
                     className="bi bi-pencil-fill"
                     ></span>
                 </div>
@@ -38,13 +38,6 @@ class ModifyIcon extends Component {
         }
 
         return style;
-    }
-
-    handleClickModify = (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        console.log("123");
     }
 
     handleMouseEnter = (ev) => {

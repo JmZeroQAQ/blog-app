@@ -13,7 +13,7 @@ class NoticeToast extends Component {
                         <button onClick={this.props.handleClick} style={this.getButtonStyle()} className='btn-close'></button>
                     </div>
                     <div style={this.getBodyStyle()}>
-                        <span>{this.props.message}</span>
+                        <span style={{fontSize: "17px", fontWeight: "bold", color: "black"}}>{this.props.message}</span>
                     </div>
                 </div>
             </React.Fragment>

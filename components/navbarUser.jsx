@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { Logout } from './token/clearToken';
 import $ from 'jquery';
 import { TOKEN } from './token/identityToken';
@@ -42,11 +44,12 @@ class NavBarUser extends Component {
                             {this.props.userInfo.username || "JmZeroQAQ"}
                         </div></li>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
-                        <li className='navbar-user-dropdown-item'><div>我的空间</div></li>
-                        <li className='navbar-user-dropdown-item'><div>文章后台</div></li>
-                        <li className='navbar-user-dropdown-item'><div>图床</div></li>
+                        <DropItemStyle><Link className='dropdown-item-link' to='/'>个人信息</Link></DropItemStyle>
+                        <DropItemStyle><Link className='dropdown-item-link' to='/'>我的空间</Link></DropItemStyle>
+                        <DropItemStyle><Link className='dropdown-item-link' to='article/index'>文章管理</Link></DropItemStyle>
+                        <DropItemStyle><Link className='dropdown-item-link' to='/'>图床</Link></DropItemStyle>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
-                        <li className='navbar-user-dropdown-item'><div onClick={this.handleClickLogout}>退出</div></li>
+                        <DropItemStyle><div className='dropdown-item' onClick={this.handleClickLogout}>退出</div></DropItemStyle>
                     </ul>
                 </li>
             </React.Fragment>
@@ -73,4 +76,33 @@ const mapDispatchToProps = {
     }
 }
  
+const DropItemStyle = styled.li`
+    font-size: 14px;
+    cursor: pointer;
+
+    .dropdown-item-link {
+        padding: 2px 20px 2px 20px;
+        display: block;
+        text-decoration: none;
+        font-size: 14px;
+        color: black;
+    }
+
+    .dropdown {
+        padding: 2px 20px 2px 20px;
+        font-size: 14px;
+        color: black;
+    }
+
+    li a{
+        display: block;
+    }
+
+    &:hover {
+        background-color: #E3E5E7;
+        transition: 400ms;
+    }
+`
+
+
 export default connect(mapStateToProps, mapDispatchToProps)(NavBarUser);

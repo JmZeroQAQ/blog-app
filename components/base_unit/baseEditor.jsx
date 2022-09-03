@@ -44,7 +44,6 @@ class BaseEditor extends Component {
     }
 
     render() { 
-        console.log('render');
         return (
             <React.Fragment>
                 <AceEditor

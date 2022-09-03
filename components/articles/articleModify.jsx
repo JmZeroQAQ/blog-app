@@ -1,55 +1,76 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Card from '../base_unit/card';
 import BaseEditor from '../base_unit/baseEditor';
 import $ from 'jquery';
-import { TOKEN } from '../token/identityToken';
+import { TOKEN, OnTokenLoad } from '../token/identityToken';
 import NoticeToast from './../base_unit/noticeToast';
 import PreviewModal from '../base_unit/previewModal';
 import { PREVIEW_MODAL } from '../base_unit/Modal/previewModal';
 import { shortcutKey, placeholder } from '../base_unit/markDown/setting';
 import EditorResizable from './editorResizable';
+import { useParams } from 'react-router-dom';
 
-class TextEditor extends Component {
-    state = {  
-        textValue: "",
-        notice: false,
-        errorNotice: false,
-        errorMessage: "",
-        editorHeight: 416,
-        preview: false,
-    } 
-    // 编辑器的实例对象
-    refArticleEditor = React.createRef();
+class ArticleModify extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            textValue: "",
+            notice: false,
+            errorNotice: false,
+            errorMessage: "",
+            editorHeight: 416,
+            preview: false,
+            load: false,
+        }
 
-    componentDidMount() {
-        if(this.props.mode !== "modify") {
-            let title, keywords, textValue;
-
-            title = localStorage.getItem("EditorTitle") || "";
-            keywords = localStorage.getItem("Editorkeywords") || "";
-            textValue = localStorage.getItem("EditorValue") || "";
-
-            // localStorage.removeItem("EditorTitle");
-            // localStorage.removeItem("Editorkeywords");
-            // localStorage.removeItem("EditorValue");
-
-            $('.articleEditor-title').val(title);
-            $('.articleEditor-keywords').val(keywords);
-            this.setState({textValue: textValue}, () => {
-                // 当上次保存的内容加载完后，选中所有内容
-                let e = this.refArticleEditor.current.editor;
-                e.selectAll();
+        OnTokenLoad(() => {
+            $.ajax({
+                url: "http://192.168.43.142/article/get/",
+                type: "get",
+                data: {
+                    articleId: this.props.params.article_id,
+                },
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                success: (resp) => {
+                    if(resp.result === "success") {
+                        let title = resp.title;
+                        let keywords = resp.keywords;
+                        let content = resp.content;
+    
+                        this.setState({textValue: content, load: true}, () => {
+                            $('.articleEditor-title').val(title);
+                            $('.articleEditor-keywords').val(keywords);
+                        });
+                    }
+                    else {
+                        window.location.href = '/404';
+                        console.log(resp);
+                    }
+                }
             });
-        }
-        else {
-
-        }
+        })
+        
     }
 
     render() { 
         return (
             <React.Fragment>
+                {this.getContent()}
+            </React.Fragment>
+        );
+    }
+
+    // 改变编辑器高度API
+    changeEditorHeight = (dy) => {
+        this.setState({editorHeight: this.state.editorHeight + dy});
+    }
+
+    getContent() {
+        if(this.state.load) {
+            return (
                 <Card style={this.getCardStyle()}>
                     <div onKeyDown={(e) => this.handleKeydownPreview(e)} style={{outline: "none"}} tabIndex='-1' className="article-editor">
                         <div className="article-editor-head row">
@@ -89,7 +110,7 @@ class TextEditor extends Component {
 
                             <div className="article-editor-body-button">
                                 <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
-                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>{this.props.mode ? "修改": "提交"}</button>
+                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>修改</button>
                             </div>
 
                         </div>
@@ -100,12 +121,8 @@ class TextEditor extends Component {
 
                     {this.getPreview()}
                 </Card>
-            </React.Fragment>
-        );
-    }
-
-    changeEditorHeight = (dy) => {
-        this.setState({editorHeight: this.state.editorHeight + dy});
+            );
+        }
     }
 
     getPreview() {
@@ -127,12 +144,10 @@ class TextEditor extends Component {
     }
 
     getNotice() {
-        let message = this.props.mode ? "修改成功" : "保存成功!";
-
         if(this.state.notice) {
             return (
                 <NoticeToast 
-                    message = {message}
+                    message = {"修改成功"}
                     handleClick = {this.handleClickNotice}
                 />
             );
@@ -150,6 +165,7 @@ class TextEditor extends Component {
             );
     }
 
+    // 关闭通知
     handleClickErrorNotice = () => {
         if(this.state.errorNotice === true)
             this.setState({errorNotice: false});
@@ -199,16 +215,17 @@ class TextEditor extends Component {
         let keywords = $('.articleEditor-keywords').val();
         let content = this.state.textValue + '\n';
         let brief = this.getBrief();
-        let visible = "self";
+        let visible = "all";
 
         $.ajax({
-            url: "http://192.168.43.142/article/create/",
+            url: "http://192.168.43.142/article/modify/",
             type: "post",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
             },
 
             data: {
+                articleId: this.props.params.article_id,
                 title,
                 content,
                 keywords,
@@ -218,19 +235,17 @@ class TextEditor extends Component {
 
             success: (res) => {
                 if(res.result !== "success") {
+                    console.log(res);
                     if(this.state.errorNotice === false) {
-                        this.setState({errorNotice: true, errorMessage: "提交失败!"});
+                        this.setState({errorNotice: true, errorMessage: "修改失败!"});
                         setTimeout(() => {
                             this.setState({errorNotice: false});
                         }, 5 * 1000); // unit: ms
                     }
                 }
                 else {
-                    let articleId = res.articleId;
-                    if(articleId !== '') {
-                        let username = this.props.userInfo.username;
-                        window.location.href = `/article/${username}/${articleId}/`;
-                    }
+                    // success
+                    console.log("success");
                 }
             },
         });
@@ -266,10 +281,10 @@ class TextEditor extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        userInfo: state.userInfo,
-    };
-}
-
-export default connect(mapStateToProps) (TextEditor);
+// eslint-disable-next-line
+export default props => (
+    <ArticleModify 
+        {...props}
+        params={useParams()}
+    />
+);

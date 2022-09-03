@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 class NotFound extends Component {
     state = {  } 
@@ -10,13 +9,12 @@ class NotFound extends Component {
                 <div className="notfound-message">404</div>
 
                 <div className="notfound-link">
-                    <button className='btn'>
+                        
+                    <a className='notfound-backhome btn' href="/">
                         <i className="bi bi-house-fill"></i>
-                        <Link className='notfound-backhome'to="/">
-                            返回首页
-                        </Link>
-                    </button>
-                    </div>
+                        返回首页
+                    </a>
+                </div>
             </NotFoundStyle>
         );
     }
@@ -51,7 +49,7 @@ const NotFoundStyle = styled.div`
     text-align: center;
 }
 
-& button {
+& a {
     outline: 1px black solid;
 }
 

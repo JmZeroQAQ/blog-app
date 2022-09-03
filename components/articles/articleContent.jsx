@@ -5,7 +5,7 @@ import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from '../token/identityToken';
 import { useParams } from 'react-router-dom';
 
-class  ArticleContent extends Component {
+class ArticleContent extends Component {
     state = {  
         content: "",
         title: "CSS",
@@ -14,6 +14,7 @@ class  ArticleContent extends Component {
         time: "2020.4.12 14:00",
         keywords: "docker, python",
         visible: "all",
+        load: false,
     } 
     
     componentDidMount() {
@@ -48,11 +49,12 @@ class  ArticleContent extends Component {
                             time: time,
                             visible: visible,
                             content: content,
+                            load: true,
                         });
                     }
                     else {
                         console.log(resp.result);
-                        this.setState({content: "# " + resp.result});
+                        window.location.href = '/404';
                     }
                 }
             });
@@ -62,6 +64,31 @@ class  ArticleContent extends Component {
     render() { 
         return (
             <React.Fragment>
+                {this.getContent()}
+            </React.Fragment>
+        );
+    }
+
+    getCardStyle = () => {
+        const style = {
+            width: "70%",
+            margin: "0 auto",
+            minHeight: "40rem",
+            backgroundColor: "rgba(255, 255, 255, 100%)",
+            marginBottom: "2rem",
+            boxShadow: "2px 1px 12px #DDDDDD",
+        };
+    
+        return style;
+    }
+
+    handleClickModify = () => {
+        window.location.href = `/modify/${this.props.params.article_id}`;
+    }
+
+    getContent() {
+        if(this.state.load) {
+            return (
                 <Card style={this.getCardStyle()}>
                     <div className="article-content">
                         <div className="article-head">
@@ -91,25 +118,8 @@ class  ArticleContent extends Component {
                         </div>
                     </div>
                 </Card>
-            </React.Fragment>
-        );
-    }
-
-    getCardStyle = () => {
-        const style = {
-            width: "70%",
-            margin: "0 auto",
-            minHeight: "40rem",
-            backgroundColor: "rgba(255, 255, 255, 100%)",
-            marginBottom: "2rem",
-            boxShadow: "2px 1px 12px #DDDDDD",
-        };
-    
-        return style;
-    }
-
-    handleClickModify() {
-        console.log("12312");
+            );
+        }
     }
 }
  

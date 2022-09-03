@@ -6,6 +6,7 @@ const TOKEN = {
     refresh_token: "",
 };
 
+// 传入一个callback，如果Token已获取，直接执行该callback，否则等Token获取后再执行callback
 const OnTokenLoad = function(callback) {
     if(TOKEN.access_token !== "") {
         callback();

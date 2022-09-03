@@ -3,31 +3,52 @@ import Card from './base_unit/card';
 import ArticlePreview from './articles/articlepreviews';
 import SearchBar from './base_unit/searchBar';
 import $ from 'jquery';
+import { TOKEN, OnTokenLoad } from './token/identityToken';
 
 class Article extends Component {
     state = {
-        articles: [
-            // {
-            //     title: "CSS",
-            //     author: "JmZeroQAQ",
-            //     time: "2022.7.25 21:47",
-            //     content: "hello world",
-            //     aid: "14",
-            // },
-        ]  
+        searchValue: "",
+        articles: [],
+        mode: "normal",
+        current_count: 0,
     } 
 
     componentDidMount() {
-        $.ajax({
-            url: "http://192.168.43.142/article/getlist/",
-            type: "get",
+        $(window).on('scroll', this.handleScroll);
 
-            success: (resp) => {
-                console.log(resp);
-                this.setState({articles: resp});
-            }
+        OnTokenLoad(() => {
+            $.ajax({
+                url: "http://192.168.43.142/article/getlist/",
+                type: "get",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+                data: {
+                    current_count: this.state.current_count,
+                },
+    
+                success: (resp) => {
+                    console.log(resp);
+                    if(resp.result === "success") {
+                        this.setState(
+                            {
+                                articles: [
+                                    ...resp.articles,
+                                ],
+                                current_count: this.state.current_count + parseInt(resp.article_size),
+                            }
+                        );
+                    }
+                }
+            });
         });
     }
+
+    componentWillUnmount() {
+        // 取消对滚动条的监听
+        $(window).off('scroll');
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -35,7 +56,11 @@ class Article extends Component {
                     <h3 style={{fontSize: "26px", fontWeight: "550", maginTop: "10px"}}>文章</h3>
                     <hr />
                     
-                    <SearchBar />
+                    <SearchBar
+                        searchValue={this.state.searchValue}
+                        handleChange={this.handleInputChange}
+                        onSearch={this.onSearch}
+                    />
 
                         {this.state.articles.map((e) => {
                             return (
@@ -44,7 +69,7 @@ class Article extends Component {
                                     title={e.title}
                                     author={e.author}
                                     time={e.time}
-                                    content={e.brief}
+                                    brief={e.brief}
                                     aid={e.aid}
                                     keywords={e.keywords}
                                 />
@@ -55,6 +80,113 @@ class Article extends Component {
                 </Card>
             </React.Fragment>
         );
+    }
+
+    // 当滚动条到底后，继续向服务器请求新的数据
+    handleScroll = (e) => {
+        if($(document).scrollTop() >= $(document).height() - $(window).height()) {
+            if(this.state.mode === "normal") {
+                $.ajax({
+                    url: "http://192.168.43.142/article/getlist/",
+                    type: "get",
+                    headers: {
+                        'Authorization': "Bearer " + TOKEN.access_token,
+                    },
+                    data: {
+                        current_count: this.state.current_count,
+                    },
+        
+                    success: (resp) => {
+                        console.log(resp);
+                        if(resp.result === "success") {
+                            this.setState(
+                                {
+                                    articles: [
+                                        ...this.state.articles,
+                                        ...resp.articles,
+                                    ],
+                                    current_count: this.state.current_count + parseInt(resp.article_size),
+                                }
+                            );
+                        }
+                        else {
+                            console.log(resp);
+                        }
+                    }
+                });
+            }
+            
+            else if(this.state.mode === "search") {
+                console.log("search mode");
+                $.ajax({
+                    url: "http://192.168.43.142/article/search/",
+                    type: "get",
+                    headers: {
+                        'Authorization': "Bearer " + TOKEN.access_token,
+                    },
+        
+                    data: {
+                        searchValue: this.state.searchValue,
+                        current_count: this.state.current_count,
+                    },
+        
+                    success: (resp) => {
+                        if(resp.result === 'success') {
+                            console.log(resp);
+                            this.setState({
+                                articles: [
+                                    ...this.state.articles,
+                                    ...resp.articles,
+                                ],
+                                current_count: this.state.current_count + resp.article_size,
+                            });
+                        }
+                        else {
+                            console.log(resp);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    handleInputChange = (e) => {
+        this.setState({searchValue: e.target.value});
+    }
+
+    // 搜索触发后 执行的函数
+    onSearch = () => {
+        let mode = this.state.searchValue === "" ? "normal" : "search";
+
+        this.setState({mode: mode, current_count: 0}, () => {
+            $.ajax({
+                url: "http://192.168.43.142/article/search/",
+                type: "get",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                data: {
+                    searchValue: this.state.searchValue,
+                    current_count: this.state.current_count,
+                },
+    
+                success: (resp) => {
+                    if(resp.result === 'success') {
+                        console.log(resp);
+                        this.setState({
+                            articles: [
+                                ...resp.articles,
+                            ],
+                            current_count: this.state.current_count + resp.article_size,
+                        });
+                    }
+                    else {
+                        console.log(resp);
+                    }
+                }
+            });
+        });
     }
 
     getCardStyle = () => {

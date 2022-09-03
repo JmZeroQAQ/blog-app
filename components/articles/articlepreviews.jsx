@@ -10,14 +10,14 @@ class ArticlePreview extends Component {
                     <div className="articlePreview_content">
                         <div className="article-preview-head">
 
-                            <ModifyIcon style={{float: "right"}} />
+                            <ModifyIcon style={{float: "right"}} handleClickModify={this.handleClickModify} />
 
                             <div style={{marginBottom: "0px", marginTop: "3px", fontSize: "20px"}}>
                                 {this.props.title}
                             </div>
 
                             <div className="article-brief" style={{fontSize: "14px", marginBottom: "4px"}}>
-                                    <span style={{fontWeight: 'lighter'}}> {this.props.content} </span>
+                                    <span style={{fontWeight: 'lighter'}}> {this.props.brief} </span>
                             </div>
                         </div>
 
@@ -45,12 +45,12 @@ class ArticlePreview extends Component {
     handleClickNewBlank = () => {
         window.open(`/article/${this.props.author}/${this.props.aid}/`);
     }
-
+    
     handleClickModify = (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
 
-        console.log("123");
+        window.location.href = `/modify/${this.props.aid}`;
     }
 
 
