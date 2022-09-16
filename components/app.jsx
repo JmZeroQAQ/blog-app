@@ -9,7 +9,7 @@ import NotFound from './notFound';
 import ArticleContent from './articles/articleContent';
 import TextEditor from './articles/articleEditor';
 import { GetLocalStorage } from '../getLocalStorage/getLocalStorage';
-import ArticleBackend from './articles/articleBackend';
+import ArticleIndex from './articles/articleIndex';
 import ArticleModify from './articles/articleModify';
 
 class App extends Component {
@@ -29,7 +29,7 @@ class App extends Component {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
-                        <Route path= '/article/index' element={ <ArticleBackend />} />
+                        <Route path= '/article/index' element={ <ArticleIndex />} />
                         <Route path='/textEditor' element={<TextEditor />} />
                         <Route path='/modify/:article_id' element={<ArticleModify mode='modify' />} />
                         <Route path='/article/:user/:article_id' element={<ArticleContent />} />

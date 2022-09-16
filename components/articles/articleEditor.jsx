@@ -23,28 +23,23 @@ class TextEditor extends Component {
     refArticleEditor = React.createRef();
 
     componentDidMount() {
-        if(this.props.mode !== "modify") {
-            let title, keywords, textValue;
+        let title, keywords, textValue;
 
-            title = localStorage.getItem("EditorTitle") || "";
-            keywords = localStorage.getItem("Editorkeywords") || "";
-            textValue = localStorage.getItem("EditorValue") || "";
+        title = localStorage.getItem("EditorTitle") || "";
+        keywords = localStorage.getItem("Editorkeywords") || "";
+        textValue = localStorage.getItem("EditorValue") || "";
 
-            // localStorage.removeItem("EditorTitle");
-            // localStorage.removeItem("Editorkeywords");
-            // localStorage.removeItem("EditorValue");
+        // localStorage.removeItem("EditorTitle");
+        // localStorage.removeItem("Editorkeywords");
+        // localStorage.removeItem("EditorValue");
 
-            $('.articleEditor-title').val(title);
-            $('.articleEditor-keywords').val(keywords);
-            this.setState({textValue: textValue}, () => {
-                // 当上次保存的内容加载完后，选中所有内容
-                let e = this.refArticleEditor.current.editor;
-                e.selectAll();
-            });
-        }
-        else {
-
-        }
+        $('.articleEditor-title').val(title);
+        $('.articleEditor-keywords').val(keywords);
+        this.setState({textValue: textValue}, () => {
+            // 当上次保存的内容加载完后，选中所有内容
+            let e = this.refArticleEditor.current.editor;
+            e.selectAll();
+        });
     }
 
     render() { 
@@ -116,7 +111,6 @@ class TextEditor extends Component {
                     offPreview={this.offPreview}
                     handleClickStorage={this.handleClickStorage}
                     handleClickSubmit={this.handleClickSubmit}
-                    mode="modify"
                 />
             );
     }

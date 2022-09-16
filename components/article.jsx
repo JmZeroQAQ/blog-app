@@ -4,6 +4,7 @@ import ArticlePreview from './articles/articlepreviews';
 import SearchBar from './base_unit/searchBar';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from './token/identityToken';
+import BackTop from './base_unit/BackTop';
 
 class Article extends Component {
     state = {
@@ -14,7 +15,7 @@ class Article extends Component {
     } 
 
     componentDidMount() {
-        $(window).on('scroll', this.handleScroll);
+        $(window).on('scroll.article', this.handleScroll);
 
         OnTokenLoad(() => {
             $.ajax({
@@ -46,7 +47,7 @@ class Article extends Component {
 
     componentWillUnmount() {
         // 取消对滚动条的监听
-        $(window).off('scroll');
+        $(window).off('scroll.article');
     }
 
     render() { 
@@ -76,7 +77,7 @@ class Article extends Component {
                             );
                         })}
 
-                        
+                    <BackTop />
                 </Card>
             </React.Fragment>
         );
@@ -84,7 +85,12 @@ class Article extends Component {
 
     // 当滚动条到底后，继续向服务器请求新的数据
     handleScroll = (e) => {
+        if(this.state.articles.length === 0) {
+            return ;
+        }
+
         if($(document).scrollTop() >= $(document).height() - $(window).height()) {
+            console.log("article 到底了");
             if(this.state.mode === "normal") {
                 $.ajax({
                     url: "http://192.168.43.142/article/getlist/",
@@ -117,7 +123,6 @@ class Article extends Component {
             }
             
             else if(this.state.mode === "search") {
-                console.log("search mode");
                 $.ajax({
                     url: "http://192.168.43.142/article/search/",
                     type: "get",

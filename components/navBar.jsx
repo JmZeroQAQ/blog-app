@@ -4,37 +4,33 @@ import { connect } from 'react-redux';
 import NavBarUser from './navbarUser';
 import $ from 'jquery';
 import {loginModal} from './base_unit/Modal/loginModal';
+import styled from 'styled-components';
 
 
 class NavBar extends Component {
-    state = {  
-        active: "home",
-    } 
+    state = {  } 
 
     componentDidMount() {
-        let url = window.location.href;
-        let active = "home";
-        if(url.search("/article") !== -1)
-            active = "article";
-        else if(url.search("Editor") !== -1)
-            active = "editor";
-        
-        this.setState({active,});
+        // let url = window.location.href;
     }
 
     render() { 
         return (
             <React.Fragment>
-                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(45deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:11, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
-                    <div className="container" style={{width: "75%"}}>
-                        <Link style={this.getActiveStyle('home')} onClick={(e) => this.handleOnClickChangeActive('home')} className="navbar-link-item navbar-brand active" to="/">首页</Link>
+                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(45deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:12, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
+                    <NavBarDivStyle>
+                        <Link className=" navbar-home navbar-brand active" to="/">
+                            <img src="/images/home.png" alt="home" />
+                        </Link>
+
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
+                            <span className="navbar-toggler-icon"></span>
                         </button>
+                        
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li style={this.getActiveStyle('article')} onClick={(e) => this.handleOnClickChangeActive('article')} className="nav-item">
-                                    <Link className="navbar-link-item nav-link active" to="/article">文章</Link>
+                                <li className="nav-item navbar-item">
+                                    <Link className="nav-link active" to="/article">文章</Link>
                                 </li>
 
                                 {this.getLoginNavbar()}
@@ -44,7 +40,7 @@ class NavBar extends Component {
                                 {this.userLogin()}
                             </ul>
                         </div>
-                    </div>
+                    </NavBarDivStyle>
                 </nav>
             </React.Fragment>
         );
@@ -75,42 +71,42 @@ class NavBar extends Component {
         $('.modal-register').hide();
     }
 
-
-    getActiveStyle(item) {
-        let style = {
-            marginRight: "30px",
-        }
-
-        if(this.state.active === item) {
-            style = {
-                ...style,
-                fontWeight: "bold",
-            }
-        }
-
-        return style;
-    }
-
-    handleOnClickChangeActive = (item) => {
-        this.setState({active: item})
-    }
-
     getLoginNavbar() {
         if(this.props.userStat === 1) {
             return (
                 <React.Fragment>
-                    <li style={this.getActiveStyle('editor')} onClick={(e) => this.handleOnClickChangeActive('editor')} className="nav-item">
-                    <Link className="navbar-link-item nav-link active" to="/textEditor">新建文章</Link>
+                    <li className="nav-item navbar-item">
+                    <Link className="nav-link active" to="/textEditor">新建文章</Link>
                     </li>
 
-                    <li style={this.getActiveStyle('picture')} onClick={(e) => this.handleOnClickChangeActive('picture')} className="nav-item">
-                    <Link className="navbar-link-item nav-link active" to="/picture">图床</Link>
+                    <li className="nav-item navbar-item">
+                    <Link className="nav-link active" to="/picture">图床</Link>
                     </li>
                 </React.Fragment>
             );
         }
     }
 }
+
+const NavBarDivStyle = styled.div.attrs(props => {
+    return {
+        className: "container",
+    };
+})`
+    width: 75%;
+
+    & .navbar-home > img {
+        width: 84px;
+        height: 36px;
+    }
+
+    & .navbar-item {
+        margin-right: 1.2rem;
+        font-size: 20px;
+        color: black;
+        font-weight: 500;
+    }
+`
 
 const mapStateToProps = (state) => {
     return {

@@ -245,7 +245,7 @@ class ArticleModify extends Component {
                 }
                 else {
                     // success
-                    console.log("success");
+                    
                 }
             },
         });
