@@ -11,6 +11,7 @@ import TextEditor from './articles/articleEditor';
 import { GetLocalStorage } from '../getLocalStorage/getLocalStorage';
 import ArticleIndex from './articles/articleIndex';
 import ArticleModify from './articles/articleModify';
+import PictureBed from './pictureBed';
 
 class App extends Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class App extends Component {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
+                        <Route path='/picturebed' element={<PictureBed />} />
                         <Route path= '/article/index' element={ <ArticleIndex />} />
                         <Route path='/textEditor' element={<TextEditor />} />
                         <Route path='/modify/:article_id' element={<ArticleModify mode='modify' />} />

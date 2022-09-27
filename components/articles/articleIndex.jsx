@@ -178,18 +178,18 @@ class ArticleIndex extends Component {
                             <div className='select-name'><span>选择操作: </span></div>
 
                             <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 1})} className="form-check-input" type="radio" name='operate-item1' readOnly={true} checked={this.state.current_select === 1 ? true : false}/>
-                                <span>删除</span>
+                                <input onClick={() => this.setState({current_select: 1})} className="form-check-input" type="radio" id='operate-item1' name='operate-item1' readOnly={true} checked={this.state.current_select === 1 ? true : false}/>
+                                <label htmlFor='operate-item1'>删除</label>
                             </div>
 
                             <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 2})} className="form-check-input" type="radio" name='operate-item2' readOnly={true} checked={this.state.current_select === 2 ? true : false}/>
-                                <span>隐藏</span>
+                                <input onClick={() => this.setState({current_select: 2})} className="form-check-input" type="radio" id='operate-item2' name='operate-item2' readOnly={true} checked={this.state.current_select === 2 ? true : false}/>
+                                <label htmlFor='operate-item2'>隐藏</label>
                             </div>
 
                             <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 3})} className="form-check-input" type="radio" name='operate-item3' readOnly={true} checked={this.state.current_select === 3 ? true : false}/>
-                                <span>公开</span>
+                                <input onClick={() => this.setState({current_select: 3})} className="form-check-input" type="radio" id='operate-item3' name='operate-item3' readOnly={true} checked={this.state.current_select === 3 ? true : false}/>
+                                <label htmlFor='operate-item3'>公开</label>
                             </div>
 
                         </div>
@@ -206,16 +206,70 @@ class ArticleIndex extends Component {
     }
 
     handleClickAction = (e) => {
+        let articleIdSet = Array.from(checkedSet.getSet());
+        console.log("articleIdSet: ", articleIdSet);
+
+        // 删除
         if(this.state.current_select === 1) {
-            console.log("删除");
+            $.ajax({
+                url: "http://192.168.43.142/article/batchOperate/",
+                type: "post",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+
+                data: {
+                    operator: "delete",
+                    articleIdSet: JSON.stringify(articleIdSet),
+                },
+
+                success: (resp) => {
+                    console.log(resp);
+                    this.updateArticles();
+                }
+            });
         }
 
         else if(this.state.current_select === 2) {
-            console.log("隐藏");
+            // console.log("隐藏");
+            $.ajax({
+                url: "http://192.168.43.142/article/batchOperate/",
+                type: "post",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+
+                data: {
+                    operator: "self",
+                    articleIdSet: JSON.stringify(articleIdSet),
+                },
+
+                success: (resp) => {
+                    console.log(resp);
+                    this.updateArticles();
+                },
+            });
         }
 
         else if(this.state.current_select === 3) {
-            console.log("公开");
+            // console.log("公开");
+            $.ajax({
+                url: "http://192.168.43.142/article/batchOperate/",
+                type: "post",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+
+                data: {
+                    operator: "all",
+                    articleIdSet: JSON.stringify(articleIdSet),
+                },
+
+                success: (resp) => {
+                    console.log(resp);
+                    this.updateArticles();
+                },
+            });
         }
     }
 
@@ -224,13 +278,13 @@ class ArticleIndex extends Component {
         let checkAll = "normal";
         // 取消选中
         if(this.state.checked) {
-            console.log("取消");
+            // console.log("取消");
             checkAll = "cancelAll";
         }
 
         // 选中
         if(!this.state.checked) {
-            console.log("选中");
+            // console.log("选中");
             checkAll = "checkAll";
         }
 
@@ -251,7 +305,7 @@ class ArticleIndex extends Component {
 
     // 删除文章后执行
     updateArticles = () => {
-        this.setState({current_count: 0, searchValue: "", mode: "normal", selectedLength: 0}, () => {
+        this.setState({current_count: 0, searchValue: "", mode: "normal", selectedLength: 0, checkAll: "cancelAll"}, () => {
             checkedSet.Init();
             $.ajax({
                 url: "http://192.168.43.142/article/search/",
@@ -277,6 +331,10 @@ class ArticleIndex extends Component {
                     }
                     else {
                         console.log(resp);
+                        this.setState({
+                            articles: [],
+                            current_count: 0,
+                        });
                     }
                 }
             });

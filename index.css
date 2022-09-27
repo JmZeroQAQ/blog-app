@@ -50,8 +50,9 @@ body {
 }
 
 .article-head-message-author {
-  color: #18191C;
-  font-size: 20px;
+  color: #FB7299;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
 }
 
@@ -104,7 +105,7 @@ pre div::-webkit-scrollbar-thumb {
 .article-editor-body-button {
   width: 100%;
   text-align: right;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 .article-editor-btn-storage {

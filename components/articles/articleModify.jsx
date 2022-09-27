@@ -9,6 +9,8 @@ import { PREVIEW_MODAL } from '../base_unit/Modal/previewModal';
 import { shortcutKey, placeholder } from '../base_unit/markDown/setting';
 import EditorResizable from './editorResizable';
 import { useParams } from 'react-router-dom';
+import ArticleCheckbox from './../base_unit/articleCheckbox';
+import { User } from '../base_unit/User/userInfo';
 
 class ArticleModify extends Component {
     constructor(props) {
@@ -21,6 +23,7 @@ class ArticleModify extends Component {
             editorHeight: 416,
             preview: false,
             load: false,
+            isPublic: true,
         }
 
         OnTokenLoad(() => {
@@ -40,7 +43,7 @@ class ArticleModify extends Component {
                         let keywords = resp.keywords;
                         let content = resp.content;
     
-                        this.setState({textValue: content, load: true}, () => {
+                        this.setState({textValue: content, load: true, isPublic: resp.visible === "all"}, () => {
                             $('.articleEditor-title').val(title);
                             $('.articleEditor-keywords').val(keywords);
                         });
@@ -108,6 +111,11 @@ class ArticleModify extends Component {
                                 </div>
                             </div>
 
+                            <ArticleCheckbox 
+                                changeIsPublic={this.changeIsPublic}
+                                isPublic={this.state.isPublic}
+                            />
+
                             <div className="article-editor-body-button">
                                 <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
                                 <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>修改</button>
@@ -123,6 +131,10 @@ class ArticleModify extends Component {
                 </Card>
             );
         }
+    }
+
+    changeIsPublic = (flag) => {
+        this.setState({isPublic: flag});
     }
 
     getPreview() {
@@ -215,7 +227,7 @@ class ArticleModify extends Component {
         let keywords = $('.articleEditor-keywords').val();
         let content = this.state.textValue + '\n';
         let brief = this.getBrief();
-        let visible = "all";
+        let visible = this.state.isPublic ? "all" : "self";
 
         $.ajax({
             url: "http://192.168.43.142/article/modify/",
@@ -245,7 +257,8 @@ class ArticleModify extends Component {
                 }
                 else {
                     // success
-                    
+                    let username = User.getUserName();
+                    window.location.href = `/article/${username}/${this.props.params.article_id}/`;
                 }
             },
         });

@@ -17,7 +17,7 @@ class NavBar extends Component {
     render() { 
         return (
             <React.Fragment>
-                <nav className="home-navbar navbar navbar-expand-lg navbar-light" style={{background: "linear-gradient(45deg, #FF90D1 20%, #7DC4CC 65%, #6190E8 75%)", fontSize: "18px", zIndex:12, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
+                <nav className="home-navbar navbar navbar-expand-lg  navbar-dark bg-dark" style={{fontSize: "18px", zIndex:12, position: "fixed", width: "100vw", height: "3.8rem", top: "0"}}>
                     <NavBarDivStyle>
                         <Link className=" navbar-home navbar-brand active" to="/">
                             <img src="/images/home.png" alt="home" />
@@ -30,7 +30,7 @@ class NavBar extends Component {
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item navbar-item">
-                                    <Link className="nav-link active" to="/article">文章</Link>
+                                    <Link className="nav-link" to="/article">文章</Link>
                                 </li>
 
                                 {this.getLoginNavbar()}
@@ -50,7 +50,7 @@ class NavBar extends Component {
         if(this.props.userStat === 0) {
             return (
                 <li className="nav-item">
-                    <div onClick={this.handleClickLogin} className="login-item" style={{cursor: "pointer"}}>
+                    <div onClick={this.handleClickLogin} className="login-item nav-link" style={{cursor: "pointer"}}>
                         登录
                     </div>
                 </li>
@@ -76,11 +76,11 @@ class NavBar extends Component {
             return (
                 <React.Fragment>
                     <li className="nav-item navbar-item">
-                    <Link className="nav-link active" to="/textEditor">新建文章</Link>
+                    <Link className="nav-link" to="/textEditor">新建文章</Link>
                     </li>
 
                     <li className="nav-item navbar-item">
-                    <Link className="nav-link active" to="/picture">图床</Link>
+                    <Link className="nav-link" to="/picturebed">图床</Link>
                     </li>
                 </React.Fragment>
             );

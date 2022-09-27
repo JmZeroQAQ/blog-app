@@ -73,6 +73,7 @@ class Article extends Component {
                                     brief={e.brief}
                                     aid={e.aid}
                                     keywords={e.keywords}
+                                    visible={e.visible}
                                 />
                             );
                         })}

@@ -92,18 +92,18 @@ class ArticleContent extends Component {
                 <Card style={this.getCardStyle()}>
                     <div className="article-content">
                         <div className="article-head">
-                            <h2 style={{color: "#24292F", fontSize: "30px", marginTop: "10px"}}>{this.state.title}</h2>
+                            <h4 style={{color: "#24292F", fontWeight: "bold", marginTop: "10px"}}>{this.state.title}</h4>
                             <div className="article-head-message">
                                 <span>作者：</span>
                                 <span className='article-head-message-author'>{this.state.author}</span>
                                 <span> ,  </span>
                                 <span>{this.state.time}</span>
                                 <span> ,  </span>
-                                <span>所有人可见</span>
+                                <span>{this.state.visible === "all" ? "所有人可见" : "仅自己可见"}</span>
                             </div>
 
-                            <div onClick={this.handleClickModify} style={{cursor: "pointer"}} className='article-change-icon'>
-                                <span className="bi bi-pencil-fill"></span>
+                            <div className='article-change-icon'>
+                                <span onClick={this.handleClickModify} style={{cursor: "pointer"}} className="bi bi-pencil-fill"></span>
                             </div>
 
 

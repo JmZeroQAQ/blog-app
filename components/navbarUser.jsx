@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 import { Logout } from './token/clearToken';
 import $ from 'jquery';
 import { TOKEN } from './token/identityToken';
-import { ACTIONS } from './redux/action';
-import { connect } from 'react-redux';
+import { User } from './base_unit/User/userInfo';
 
 class NavBarUser extends Component {
-    state = {  } 
+    state = {  
+        username: "",
+    } 
 
     componentDidMount() {
-        // console.log("TOKEN", TOKEN.access_token, TOKEN.refresh_token);
         $.ajax({
             url: "http://192.168.43.142/user/getinfo/",
             type: "get",
@@ -21,8 +21,8 @@ class NavBarUser extends Component {
 
             success: (resp) => {
                 if(resp.result === "success") {
-                    let username = resp.username;
-                    this.props.setUserInfo({username});
+                    User.setUserName(resp.username);
+                    this.setState({username: resp.username});
                 }
                 else {
                     console.log("获取用户信息失败");
@@ -41,7 +41,7 @@ class NavBarUser extends Component {
                     </a>
                     <ul className="dropdown-menu navbar-user-dropdown" style={{margin: "0"}}>
                         <li style={{fontSize: "16px", marginLeft: "20px", fontWeight: "bold", userSelect: "none"}}><div>
-                            {this.props.userInfo.username || "JmZeroQAQ"}
+                            {this.state.username || "未登录"}
                         </div></li>
                         <li><div><hr style={{margin: "5px 0px 10px 0px"}} /></div></li>
                         <DropItemStyle><Link className='dropdown-item-link' to='/'>个人信息</Link></DropItemStyle>
@@ -58,21 +58,6 @@ class NavBarUser extends Component {
 
     handleClickLogout() {
         Logout();
-    }
-}
-
-const mapStateToProps = (state) => {
-    return {
-        userInfo: state.userInfo
-    };
-}
-
-const mapDispatchToProps = {
-    setUserInfo: (userInfo) => {
-        return {
-            type: ACTIONS.setUserInfo,
-            username: userInfo.username,
-        };
     }
 }
  
@@ -105,4 +90,4 @@ const DropItemStyle = styled.li`
 `
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavBarUser);
+export default NavBarUser;

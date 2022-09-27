@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Card from '../base_unit/card';
 import BaseEditor from '../base_unit/baseEditor';
 import $ from 'jquery';
@@ -9,6 +8,8 @@ import PreviewModal from '../base_unit/previewModal';
 import { PREVIEW_MODAL } from '../base_unit/Modal/previewModal';
 import { shortcutKey, placeholder } from '../base_unit/markDown/setting';
 import EditorResizable from './editorResizable';
+import ArticleCheckbox from '../base_unit/articleCheckbox';
+import { User } from '../base_unit/User/userInfo';
 
 class TextEditor extends Component {
     state = {  
@@ -16,8 +17,9 @@ class TextEditor extends Component {
         notice: false,
         errorNotice: false,
         errorMessage: "",
-        editorHeight: 416,
+        editorHeight: 416, //编辑器高度
         preview: false,
+        isPublic: true,
     } 
     // 编辑器的实例对象
     refArticleEditor = React.createRef();
@@ -82,6 +84,11 @@ class TextEditor extends Component {
                                 </div>
                             </div>
 
+                            <ArticleCheckbox
+                                changeIsPublic={this.changeIsPublic}
+                                isPublic={this.state.isPublic}
+                            />
+
                             <div className="article-editor-body-button">
                                 <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
                                 <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>{this.props.mode ? "修改": "提交"}</button>
@@ -97,6 +104,10 @@ class TextEditor extends Component {
                 </Card>
             </React.Fragment>
         );
+    }
+
+    changeIsPublic = (flag) => {
+        this.setState({isPublic: flag});
     }
 
     changeEditorHeight = (dy) => {
@@ -193,7 +204,7 @@ class TextEditor extends Component {
         let keywords = $('.articleEditor-keywords').val();
         let content = this.state.textValue + '\n';
         let brief = this.getBrief();
-        let visible = "self";
+        let visible = this.state.isPublic ? "all" : "self";
 
         $.ajax({
             url: "http://192.168.43.142/article/create/",
@@ -222,7 +233,7 @@ class TextEditor extends Component {
                 else {
                     let articleId = res.articleId;
                     if(articleId !== '') {
-                        let username = this.props.userInfo.username;
+                        let username = User.getUserName();
                         window.location.href = `/article/${username}/${articleId}/`;
                     }
                 }
@@ -260,10 +271,4 @@ class TextEditor extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        userInfo: state.userInfo,
-    };
-}
-
-export default connect(mapStateToProps) (TextEditor);
+export default TextEditor;

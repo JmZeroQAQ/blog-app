@@ -33,7 +33,10 @@ class ArticlePreview extends Component {
                                     <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.author} </span>
 
                                     <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>Time : </span>
-                                    <span style={{fontWeight: 'lighter'}}>{this.props.time}</span>
+                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.time}</span>
+
+                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>范围 : </span>
+                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.visible === "all" ? "公开" : "未公开"}</span>
                             </div>
                         </div>
                     </div>

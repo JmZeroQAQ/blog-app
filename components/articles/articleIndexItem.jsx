@@ -55,7 +55,7 @@ class ArticleIndexItem extends Component {
     handleChangeChecked = (e) => {
         // 取消选中
         if(this.state.checked) {
-            console.log("取消");
+            // console.log("取消");
             if(checkedSet.has(this.props.aid)) {
                 checkedSet.delete(this.props.aid);
             }
@@ -63,14 +63,14 @@ class ArticleIndexItem extends Component {
 
         // 选中
         if(!this.state.checked) {
-            console.log("选中");
+            // console.log("选中");
             if(!checkedSet.has(this.props.aid)) {
                 checkedSet.add(this.props.aid);
             }
         }
 
         this.props.updateSelectedLength(checkedSet.getLength());
-        console.log(checkedSet.getSet());
+        // console.log(checkedSet.getSet());
         
         if(this.props.changeCheckAll !== "normal") {
             this.props.changeCheckAll("normal");
@@ -91,7 +91,7 @@ class ArticleIndexItem extends Component {
             if(!checkedSet.has(this.props.aid)) {
                 checkedSet.add(this.props.aid);
                 this.props.updateSelectedLength(checkedSet.getLength());
-                console.log("add");
+                // console.log("add");
             }
             this.setState({checked: true});
         }
