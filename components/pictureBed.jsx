@@ -3,35 +3,58 @@ import Card from './base_unit/card';
 import styled from 'styled-components';
 import PictureItem from './pictures/pictureItem';
 import PicturePreview from './pictures/picturePreview';
+import PicturebedMessage from './pictures/picturebedMessage';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from './token/identityToken';
+import NoticeToast from './base_unit/noticeToast';
 
 class PictureBed extends Component {
     state = {  
         previewShow: false,
         previewUrl: "",
         images: [],
+        isUpdate: false,
+        currentCount: 0,
+        notice: false,
+        errorNotice: false,
+        errorMessage: "",
     } 
 
     componentDidMount() {
+        $('.navbar-picturebed').addClass("active");
+        $(window).on('scroll.image', this.handleScroll);
+
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://192.168.43.142/image/getImageList/",
+                url: "http://150.158.182.65/image/getImageList/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
                 },
 
-                data: "",
+                data: {
+                    currentCount: 0,
+                },
 
                 success: (resp) => {
-                    console.log(resp.images);
-                    this.setState({
-                        images: resp.images,
-                    });
+                    if(resp.result === "success") {
+                        this.setState({
+                            images: resp.images,
+                            isUpdate: true,
+                            currentCount: 0 + parseInt(resp.responseCount),
+                        });
+                    }
+                    else {
+                        console.log(resp.result);
+                    }
                 },
             });
         });
+    }
+
+    componentWillUnmount() {
+        $('.navbar-picturebed').removeClass("active");
+        $(window).off('scroll.image');
     }
 
     render() { 
@@ -66,23 +89,10 @@ class PictureBed extends Component {
                                 </div>
                             </div>
 
-                            <div className="picturebed-message">
-                                <div className='picturebed-message-title'>图床信息</div>
-                                <div className='message-item-container'>
-                                    <span className='picturebed-message-item'>可用空间: </span>
-                                    <span>200.00 MB</span>
-                                </div>
-
-                                <div className='message-item-container'>
-                                    <span className='picturebed-message-item'>已使用空间: </span>
-                                    <span>1.00 MB</span>
-                                </div>
-
-                                <div className='message-item-container'>
-                                    <span className='picturebed-message-item'>图片数量: </span>
-                                    <span>1 张</span>
-                                </div>
-                            </div>
+                            {<PicturebedMessage
+                                isUpdate = {this.state.isUpdate}
+                                switchIsUpdate = {this.switchIsUpdate}
+                            />}
                         </div>
 
                         <div className="picturebed-body">
@@ -100,7 +110,7 @@ class PictureBed extends Component {
                                                 switchPreview={this.switchPreview}
                                                 imageUpdate={this.handleClickUpdate}
                                                 imageId={image.imageId}
-                                                imageUrl={"http://192.168.43.142/" + image.imageUrl}
+                                                imageUrl={"http://150.158.182.65" + image.imageUrl}
                                                 imageSize={image.imageSize}
                                                 imageCreateTime={image.imageCreateTime}
                                             />
@@ -110,6 +120,8 @@ class PictureBed extends Component {
                             </div>
                         </div>
                     </PictureBedStyle>
+                    {this.getNotice()}
+                    {this.getErrorNotice()}
                 </Card>
             </React.Fragment>
         );
@@ -127,10 +139,47 @@ class PictureBed extends Component {
         return style;
     }
 
+    getNotice() {
+        let message = "上传成功!";
+
+        if(this.state.notice) {
+            return (
+                <NoticeToast 
+                    message = {message}
+                    handleClick = {this.handleClickNotice}
+                />
+            );
+        }
+    }
+
+    getErrorNotice() {
+        if(this.state.errorNotice)
+        return (
+            <NoticeToast 
+                messageType="warning"
+                message={this.state.errorMessage}
+                handleClick = {this.handleClickErrorNotice}
+            />
+        );
+    }
+
+    handleClickNotice = () => {
+        if(this.state.notice === true)
+            this.setState({notice: false});
+    }
+
+    handleClickErrorNotice = () => {
+        if(this.state.errorNotice === true)
+            this.setState({errorNotice: false});
+    }
+
     switchPreview = (newstat, imageUrl) => {
         if(!imageUrl) imageUrl = "";
         this.setState({previewShow: newstat, previewUrl: imageUrl});
-        console.log("11");
+    }
+
+    switchIsUpdate = () => {
+        this.setState({isUpdate: false});
     }
 
     handleClickUpload = (e) => {
@@ -138,7 +187,6 @@ class PictureBed extends Component {
     }
 
     handleOnChangeUpload = (e) => {
-        console.log(e.target.files);
         if(e.target.files.length === 1) { // 上传单个文件
             let image = e.target.files[0];
             let image_name = image.name; // 图片名字
@@ -149,10 +197,9 @@ class PictureBed extends Component {
                 if(image_size <= 10) {
                     let data = new FormData();
                     data.append("file", image);
-                    console.log(data);
                     
                     $.ajax({
-                        url: "http://192.168.43.142/image/upload/",
+                        url: "http://150.158.182.65/image/upload/",
                         type: "post",
                         headers: {
                             "Authorization": "Bearer " + TOKEN.access_token,
@@ -162,9 +209,20 @@ class PictureBed extends Component {
                         contentType: false,
 
                         success: (resp) => {
-                            console.log(resp);
                             if(resp.result === "success") {
                                 this.handleClickUpdate();
+                                this.setState({notice: true}, () => {
+                                    setTimeout(() => {
+                                        this.setState({notice: false});
+                                    }, 3 * 1000);
+                                });
+                            }
+                            else {
+                                this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                                    setTimeout(() => {
+                                        this.setState({errorNotice: false});
+                                    }, 3 * 1000);
+                                });
                             }
                         }
                     })
@@ -176,24 +234,72 @@ class PictureBed extends Component {
             }
         }
     }
-
+    // 在更新数据后刷新数据
     handleClickUpdate = () => {
         $.ajax({
-            url: "http://192.168.43.142/image/getImageList/",
+            url: "http://150.158.182.65/image/getImageList/",
             type: "get",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
             },
 
-            data: "",
+            data: {
+                currentCount: 0,
+            },
 
             success: (resp) => {
-                console.log(resp.images);
-                this.setState({
-                    images: resp.images,
-                });
+                if(resp.result === "success") {
+                    this.setState({
+                        images: resp.images,
+                        isUpdate: true,
+                        currentCount: 0 + parseInt(resp.responseCount),
+                    });
+                }
+                else {
+                    this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                        setTimeout(() => {
+                            this.setState({errorNotice: false});
+                        }, 3 * 1000);
+                    });
+                }
             },
         });
+    }
+
+    handleScroll = (e) => {
+        if(this.state.images.length === 0) {
+            return ;
+        }
+        // $(document).scrollTop()滚动距离, $(document).height()页面高度， $(window).height()视窗高度
+        // 滚动距离 + 视窗高度 === 页面高度，说明到底了.
+        if($(document).scrollTop() >= $(document).height() - $(window).height()) {
+            $.ajax({
+                url: "http://150.158.182.65/image/getImageList/",
+                type: "get",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                data: {
+                    currentCount: this.state.currentCount,
+                },
+    
+                success: (resp) => {
+                    if(resp.result === "success") {
+                        this.setState({
+                            images: [
+                                ...this.state.images,
+                                ...resp.images,
+                            ],
+                            currentCount: this.state.currentCount + parseInt(resp.responseCount),
+                        });
+                    }
+                    else {
+                        console.log(resp.result);
+                    }
+                },
+            });
+        }
     }
 }
  

@@ -1,45 +1,56 @@
 import React, { Component } from 'react';
 import ModifyIcon from '../base_unit/modifyIcon';
+import styled from 'styled-components';
+import { User, OnUserInfoLoad } from '../base_unit/User/userInfo';
 
 class ArticlePreview extends Component {
-    state = {  } 
+    state = {  
+        avatarUrl: "",
+    } 
+
+    componentDidMount() {
+        OnUserInfoLoad(() => {
+            this.setState({avatarUrl: User.getUserAvatar()});
+        });
+    }
+
     render() { 
         return (
             <React.Fragment>
                 <div onClick={this.handleClickNewBlank} className="shadow rounded" style={this.get_style()}>
-                    <div className="articlePreview_content">
+                    <PreviewStyle>
                         <div className="article-preview-head">
 
                             <ModifyIcon style={{float: "right"}} handleClickModify={this.handleClickModify} />
 
-                            <div style={{marginBottom: "0px", marginTop: "3px", fontSize: "20px"}}>
+                            <div className='preview-title'>
                                 {this.props.title}
                             </div>
 
                             <div className="article-brief" style={{fontSize: "14px", marginBottom: "4px"}}>
-                                    <span style={{fontWeight: 'lighter'}}> {this.props.brief} </span>
+                                    <span style={{display: "block", fontWeight: 'lighter', whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}> {this.props.brief} </span>
                             </div>
                         </div>
 
                         <hr style={{margin: '2px'}} />
 
                         <div className="article-preview-body">
-                            <div className="article-message" style={this.get_article_message_style()}>
-                                <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>关键字 : </span>
-                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.keywords}</span>
+                            <div className="article-message">
+                                <span className='title-item'>关键字 : </span>
+                                    <span className='title-content-item'>{this.props.keywords}</span>
 
-                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>Author : </span>
-                                    <img style={{width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", marginRight: "4px"}} src='/images/avatar.jpg' alt="头像" />
-                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.author} </span>
+                                    <span className='title-item'>Author : </span>
+                                    <img className='avatar-item' src={this.state.avatarUrl} alt="头像" />
+                                    <span className='title-content-item'>{this.props.author} </span>
 
-                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>Time : </span>
-                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.time}</span>
+                                    <span className='title-item'>Time : </span>
+                                    <span className='title-content-item'>{this.props.time}</span>
 
-                                    <span style={{color: "#6a737d", fontWeight: 'bold', marginRight: "4px"}}>范围 : </span>
-                                    <span style={{fontWeight: 'lighter', marginRight: "2rem"}}>{this.props.visible === "all" ? "公开" : "未公开"}</span>
+                                    <span className='title-item'>范围 : </span>
+                                    <span className='title-content-item'>{this.props.visible === "all" ? "公开" : "未公开"}</span>
                             </div>
                         </div>
-                    </div>
+                    </PreviewStyle>
                 </div>
             </React.Fragment>
         );
@@ -70,16 +81,40 @@ class ArticlePreview extends Component {
 
         return style;
     }
-
-    get_article_message_style = () => {
-        const style = {
-            fontSize: "14px",
-            marginTop: "8px",
-            marginBottom: "2px",
-        };
-
-        return style;
-    }
 }
  
+const PreviewStyle = styled.div`
+    
+    & .preview-title {
+        margin-bottom: 0px;
+        margin-top: 3px;
+        font-size: 20px;
+    }
+
+    & .article-message {
+        font-size: 14px;
+        margin-top: 8px;
+        margin-bottom: 2px;
+    }
+
+    & .avatar-item {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 4px;
+    }
+
+    & .title-item {
+        color: #6a737d;
+        font-weight: bold;
+        margin-right: 4px;
+    }
+
+    & .title-content-item {
+        font-weight: lighter;
+        margin-right: 2rem;
+    }
+`
+
 export default ArticlePreview;

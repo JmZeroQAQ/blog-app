@@ -32,7 +32,7 @@ class ArticleIndexItem extends Component {
 
     handleClickDelete = (e) => {
         $.ajax({
-            url: "http://192.168.43.142/article/delete/",
+            url: "http://150.158.182.65/article/delete/",
             type: "get",
             headers: {
                 'authorization': "Bearer " + TOKEN.access_token,
@@ -42,8 +42,12 @@ class ArticleIndexItem extends Component {
                 articleId: this.props.aid,
             },
             success: (resp) => {
-                console.log(resp);
-                this.props.updateArticles();
+                if(resp.result === "success") {
+                    this.props.updateArticles();
+                }
+                else {
+                    console.log(resp.result);
+                }
             }
         })
     }
@@ -55,7 +59,6 @@ class ArticleIndexItem extends Component {
     handleChangeChecked = (e) => {
         // 取消选中
         if(this.state.checked) {
-            // console.log("取消");
             if(checkedSet.has(this.props.aid)) {
                 checkedSet.delete(this.props.aid);
             }
@@ -63,14 +66,12 @@ class ArticleIndexItem extends Component {
 
         // 选中
         if(!this.state.checked) {
-            // console.log("选中");
             if(!checkedSet.has(this.props.aid)) {
                 checkedSet.add(this.props.aid);
             }
         }
 
         this.props.updateSelectedLength(checkedSet.getLength());
-        // console.log(checkedSet.getSet());
         
         if(this.props.changeCheckAll !== "normal") {
             this.props.changeCheckAll("normal");
@@ -91,7 +92,6 @@ class ArticleIndexItem extends Component {
             if(!checkedSet.has(this.props.aid)) {
                 checkedSet.add(this.props.aid);
                 this.props.updateSelectedLength(checkedSet.getLength());
-                // console.log("add");
             }
             this.setState({checked: true});
         }

@@ -3,8 +3,9 @@ import Card from './base_unit/card';
 import ArticlePreview from './articles/articlepreviews';
 import SearchBar from './base_unit/searchBar';
 import $ from 'jquery';
-import { TOKEN, OnTokenLoad } from './token/identityToken';
+import { TOKEN, OnTokenLoad, OnTourist } from './token/identityToken';
 import BackTop from './base_unit/BackTop';
+import NoticeToast from './base_unit/noticeToast';
 
 class Article extends Component {
     state = {
@@ -12,14 +13,17 @@ class Article extends Component {
         articles: [],
         mode: "normal",
         current_count: 0,
+        errorNotice: false,
+        errorMessage: "",
     } 
 
     componentDidMount() {
         $(window).on('scroll.article', this.handleScroll);
+        $('.navbar-article').addClass("active");
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://192.168.43.142/article/getlist/",
+                url: "http://150.158.182.65/article/getlist/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -29,7 +33,6 @@ class Article extends Component {
                 },
     
                 success: (resp) => {
-                    console.log(resp);
                     if(resp.result === "success") {
                         this.setState(
                             {
@@ -43,11 +46,20 @@ class Article extends Component {
                 }
             });
         });
+
+        OnTourist(() => {
+            this.setState({errorNotice: true, errorMessage: "请登录!"}, () => {
+                setTimeout(() => {
+                    this.setState({errorNotice: false});
+                }, 3 * 1000);
+            });
+        });
     }
 
     componentWillUnmount() {
         // 取消对滚动条的监听
         $(window).off('scroll.article');
+        $('.navbar-article').removeClass("active");
     }
 
     render() { 
@@ -79,9 +91,26 @@ class Article extends Component {
                         })}
 
                     <BackTop />
+                    {this.getErrorNotice()}
                 </Card>
             </React.Fragment>
         );
+    }
+
+    getErrorNotice() {
+        if(this.state.errorNotice)
+        return (
+            <NoticeToast 
+                messageType="warning"
+                message={this.state.errorMessage}
+                handleClick = {this.handleClickErrorNotice}
+            />
+        );
+    }
+
+    handleClickErrorNotice = () => {
+        if(this.state.errorNotice === true)
+            this.setState({errorNotice: false});
     }
 
     // 当滚动条到底后，继续向服务器请求新的数据
@@ -91,10 +120,9 @@ class Article extends Component {
         }
 
         if($(document).scrollTop() >= $(document).height() - $(window).height()) {
-            console.log("article 到底了");
             if(this.state.mode === "normal") {
                 $.ajax({
-                    url: "http://192.168.43.142/article/getlist/",
+                    url: "http://150.158.182.65/article/getlist/",
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -104,7 +132,6 @@ class Article extends Component {
                     },
         
                     success: (resp) => {
-                        console.log(resp);
                         if(resp.result === "success") {
                             this.setState(
                                 {
@@ -117,7 +144,11 @@ class Article extends Component {
                             );
                         }
                         else {
-                            console.log(resp);
+                            this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                                setTimeout(() => {
+                                    this.setState({errorNotice: false});
+                                }, 3 * 1000);
+                            });
                         }
                     }
                 });
@@ -125,7 +156,7 @@ class Article extends Component {
             
             else if(this.state.mode === "search") {
                 $.ajax({
-                    url: "http://192.168.43.142/article/search/",
+                    url: "http://150.158.182.65/article/search/",
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -138,7 +169,6 @@ class Article extends Component {
         
                     success: (resp) => {
                         if(resp.result === 'success') {
-                            console.log(resp);
                             this.setState({
                                 articles: [
                                     ...this.state.articles,
@@ -148,7 +178,11 @@ class Article extends Component {
                             });
                         }
                         else {
-                            console.log(resp);
+                            this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                                setTimeout(() => {
+                                    this.setState({errorNotice: false});
+                                }, 3 * 1000);
+                            });
                         }
                     }
                 });
@@ -166,7 +200,7 @@ class Article extends Component {
 
         this.setState({mode: mode, current_count: 0}, () => {
             $.ajax({
-                url: "http://192.168.43.142/article/search/",
+                url: "http://150.158.182.65/article/search/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -179,7 +213,6 @@ class Article extends Component {
     
                 success: (resp) => {
                     if(resp.result === 'success') {
-                        console.log(resp);
                         this.setState({
                             articles: [
                                 ...resp.articles,
@@ -188,7 +221,11 @@ class Article extends Component {
                         });
                     }
                     else {
-                        console.log(resp);
+                        this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                            setTimeout(() => {
+                                this.setState({errorNotice: false});
+                            }, 3 * 1000);
+                        });
                     }
                 }
             });

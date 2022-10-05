@@ -7,6 +7,7 @@ import { checkedSet } from './checkedArticleSet';
 import {TOKEN, OnTokenLoad} from '../token/identityToken';
 import SearchBar from '../base_unit/searchBar';
 import BackTop from '../base_unit/BackTop';
+import NoticeToast from '../base_unit/noticeToast';
 
 class ArticleIndex extends Component {
     state = {  
@@ -18,6 +19,9 @@ class ArticleIndex extends Component {
         current_select: 1,
         mode: "normal",
         searchValue: "",
+        notice: false,
+        noticeMessage: "",
+        messageType: "",
     } 
 
     componentDidMount() {
@@ -26,7 +30,7 @@ class ArticleIndex extends Component {
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://192.168.43.142/article/getlist/",
+                url: "http://150.158.182.65/article/getlist/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -36,7 +40,6 @@ class ArticleIndex extends Component {
                 },
     
                 success: (resp) => {
-                    console.log(resp);
                     if(resp.result === "success") {
                         this.setState(
                             {
@@ -46,6 +49,13 @@ class ArticleIndex extends Component {
                                 current_count: this.state.current_count + parseInt(resp.article_size),
                             }
                         );
+                    }
+                    else {
+                        this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
                     }
                 }
             });
@@ -106,9 +116,28 @@ class ArticleIndex extends Component {
 
                         </table>
                     </ArticleBackendStyle>
+
+                    {this.getNotice()}
                 </Card>
             </React.Fragment>
         );
+    }
+
+    getNotice() {
+        if(this.state.notice) {
+            return (
+                <NoticeToast 
+                    messageType = {this.state.messageType}
+                    message = {this.state.noticeMessage}
+                    handleClick = {this.handleClickNotice}
+                />
+            );
+        }
+    }
+
+    handleClickNotice = () => {
+        if(this.state.notice === true)
+            this.setState({notice: false});
     }
 
     // 搜索触发后 执行的函数
@@ -119,7 +148,7 @@ class ArticleIndex extends Component {
             checkedSet.Init();
 
             $.ajax({
-                url: "http://192.168.43.142/article/search/",
+                url: "http://150.158.182.65/article/search/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -132,7 +161,6 @@ class ArticleIndex extends Component {
     
                 success: (resp) => {
                     if(resp.result === 'success') {
-                        console.log(resp);
                         this.setState({
                             articles: [
                                 ...resp.articles,
@@ -141,7 +169,12 @@ class ArticleIndex extends Component {
                         });
                     }
                     else {
-                        console.log(resp);
+                        this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                                window.location.reload();// 直接刷新一下吧
+                            }, 3 * 1000);
+                        });
                     }
                 }
             });
@@ -207,12 +240,11 @@ class ArticleIndex extends Component {
 
     handleClickAction = (e) => {
         let articleIdSet = Array.from(checkedSet.getSet());
-        console.log("articleIdSet: ", articleIdSet);
 
         // 删除
         if(this.state.current_select === 1) {
             $.ajax({
-                url: "http://192.168.43.142/article/batchOperate/",
+                url: "http://150.158.182.65/article/batchOperate/",
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -224,16 +256,28 @@ class ArticleIndex extends Component {
                 },
 
                 success: (resp) => {
-                    console.log(resp);
-                    this.updateArticles();
+                    if(resp.result === "success") {
+                        this.updateArticles();
+                        this.setState({notice: true, noticeMessage: "删除成功!", messageType: "normal"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
+                    else {
+                        this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
                 }
             });
         }
 
         else if(this.state.current_select === 2) {
-            // console.log("隐藏");
             $.ajax({
-                url: "http://192.168.43.142/article/batchOperate/",
+                url: "http://150.158.182.65/article/batchOperate/",
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -245,16 +289,28 @@ class ArticleIndex extends Component {
                 },
 
                 success: (resp) => {
-                    console.log(resp);
-                    this.updateArticles();
+                    if(resp.result === "success") {
+                        this.updateArticles();
+                        this.setState({notice: true, noticeMessage: "修改成功", messageType: "normal"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
+                    else {
+                        this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
                 },
             });
         }
 
         else if(this.state.current_select === 3) {
-            // console.log("公开");
             $.ajax({
-                url: "http://192.168.43.142/article/batchOperate/",
+                url: "http://150.158.182.65/article/batchOperate/",
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -266,8 +322,21 @@ class ArticleIndex extends Component {
                 },
 
                 success: (resp) => {
-                    console.log(resp);
-                    this.updateArticles();
+                    if(resp.result === "success") {
+                        this.updateArticles();
+                        this.setState({notice: true, noticeMessage: "修改成功", messageType: "normal"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
+                    else {
+                        this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                            setTimeout(() => {
+                                this.setState({notice: false});
+                            }, 3 * 1000);
+                        });
+                    }
                 },
             });
         }
@@ -278,13 +347,11 @@ class ArticleIndex extends Component {
         let checkAll = "normal";
         // 取消选中
         if(this.state.checked) {
-            // console.log("取消");
             checkAll = "cancelAll";
         }
 
         // 选中
         if(!this.state.checked) {
-            // console.log("选中");
             checkAll = "checkAll";
         }
 
@@ -303,12 +370,12 @@ class ArticleIndex extends Component {
         this.setState({selectedLength: newLength});
     }
 
-    // 删除文章后执行
+    // 删除文章后执行, 更新文章列表
     updateArticles = () => {
         this.setState({current_count: 0, searchValue: "", mode: "normal", selectedLength: 0, checkAll: "cancelAll"}, () => {
             checkedSet.Init();
             $.ajax({
-                url: "http://192.168.43.142/article/search/",
+                url: "http://150.158.182.65/article/search/",
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -321,7 +388,6 @@ class ArticleIndex extends Component {
     
                 success: (resp) => {
                     if(resp.result === 'success') {
-                        console.log(resp);
                         this.setState({
                             articles: [
                                 ...resp.articles,
@@ -330,7 +396,6 @@ class ArticleIndex extends Component {
                         });
                     }
                     else {
-                        console.log(resp);
                         this.setState({
                             articles: [],
                             current_count: 0,
@@ -349,7 +414,7 @@ class ArticleIndex extends Component {
         if($(document).scrollTop() >= $(document).height() - $(window).height()) {
             if(this.state.mode === "normal") {
                 $.ajax({
-                    url: "http://192.168.43.142/article/getlist/",
+                    url: "http://150.158.182.65/article/getlist/",
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -359,7 +424,6 @@ class ArticleIndex extends Component {
                     },
         
                     success: (resp) => {
-                        console.log(resp);
                         if(resp.result === "success") {
                             this.setState(
                                 {
@@ -372,7 +436,11 @@ class ArticleIndex extends Component {
                             );
                         }
                         else {
-                            console.log(resp);
+                            this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                                setTimeout(() => {
+                                    this.setState({notice: false});
+                                }, 3 * 1000);
+                            });
                         }
                     }
                 });
@@ -380,7 +448,7 @@ class ArticleIndex extends Component {
             
             else if(this.state.mode === "search") {
                 $.ajax({
-                    url: "http://192.168.43.142/article/search/",
+                    url: "http://150.158.182.65/article/search/",
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -393,7 +461,6 @@ class ArticleIndex extends Component {
         
                     success: (resp) => {
                         if(resp.result === 'success') {
-                            console.log(resp);
                             this.setState({
                                 articles: [
                                     ...this.state.articles,
@@ -403,7 +470,11 @@ class ArticleIndex extends Component {
                             });
                         }
                         else {
-                            console.log(resp);
+                            this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
+                                setTimeout(() => {
+                                    this.setState({notice: false});
+                                }, 3 * 1000);
+                            });
                         }
                     }
                 });

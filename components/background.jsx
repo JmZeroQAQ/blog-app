@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
+import { User, OnUserInfoLoad } from './base_unit/User/userInfo';
 
 class BackGround extends Component {
-    state = {  } 
+    state = {  
+        backgroundUrl: "",
+    } 
+
+    componentDidMount() {
+        OnUserInfoLoad(() => {
+            this.setState({backgroundUrl: User.getBackgroundUrl()})
+        });
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -12,7 +22,7 @@ class BackGround extends Component {
 
     getBackgroundStyle() {
         let style = {
-            backgroundImage: "url('/images/backgroundimage.png')",
+            backgroundImage: `url(${this.state.backgroundUrl})`,
             width: "100%",
             height: "100%",
             position: "fixed",
@@ -26,4 +36,5 @@ class BackGround extends Component {
     }
 }
  
+
 export default BackGround;

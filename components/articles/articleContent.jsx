@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Card from '../base_unit/card';
 import DisplayMarkDown from './displayMarkdown';
 import $ from 'jquery';
-import { TOKEN, OnTokenLoad } from '../token/identityToken';
+import { TOKEN, OnTokenLoad, OnTourist } from '../token/identityToken';
 import { useParams } from 'react-router-dom';
 
 class ArticleContent extends Component {
@@ -20,9 +20,8 @@ class ArticleContent extends Component {
     componentDidMount() {
 
         OnTokenLoad(() => {
-            console.log(this.props.params.article_id);
             $.ajax({
-                url: "http://192.168.43.142/article/get/",
+                url: "http://150.158.182.65/article/get/",
                 type: "get",
                 data: {
                     articleId: this.props.params.article_id,
@@ -53,7 +52,45 @@ class ArticleContent extends Component {
                         });
                     }
                     else {
-                        console.log(resp.result);
+                        // 当文章未公开或者其它错误时
+                        window.location.href = '/404';
+                    }
+                }
+            });
+        });
+
+        // 游客访问接口
+        OnTourist(() => {
+            $.ajax({
+                url: "http://150.158.182.65/article/get/",
+                type: "get",
+                data: {
+                    articleId: this.props.params.article_id,
+                },
+    
+                success: (resp) => {
+                    if(resp.result === 'success') {
+                        let title = resp.title;
+                        let username = resp.username;
+                        let keywords = resp.keywords;
+                        let brief = resp.brief;
+                        let content = resp.content;
+                        let time = resp.time;
+                        let visible = resp.visible;
+
+                        this.setState({
+                            title: title,
+                            author: username,
+                            keywords: keywords,
+                            brief: brief,
+                            time: time,
+                            visible: visible,
+                            content: content,
+                            load: true,
+                        });
+                    }
+                    else {
+                        // 当文章未公开或者其它错误时
                         window.location.href = '/404';
                     }
                 }
@@ -110,7 +147,7 @@ class ArticleContent extends Component {
                             <hr style={{marginTop: "6px", color: "#999999"}} />
                         </div>
                         <div className="article-body">
-                            <div className="article-body-content markdown-body">
+                            <div className="markdown-body">
                                 <DisplayMarkDown 
                                     article={this.state.content}
                                 />

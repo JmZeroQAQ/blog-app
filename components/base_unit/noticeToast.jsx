@@ -22,7 +22,7 @@ class NoticeToast extends Component {
 
     getDivBoxStyle() {
         let style = {
-            height: "5.2rem",
+            height: "5.5rem",
             width: "22rem",
             position: "fixed",
             backgroundColor: "rgba(255, 255, 255, .85)",

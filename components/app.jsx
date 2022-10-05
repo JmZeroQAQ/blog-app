@@ -12,6 +12,7 @@ import { GetLocalStorage } from '../getLocalStorage/getLocalStorage';
 import ArticleIndex from './articles/articleIndex';
 import ArticleModify from './articles/articleModify';
 import PictureBed from './pictureBed';
+import Profile from './preofile';
 
 class App extends Component {
     constructor(props) {
@@ -31,8 +32,9 @@ class App extends Component {
                         <Route path='/' element={<Home />} />
                         <Route path='/article' element={<Article />} />
                         <Route path='/picturebed' element={<PictureBed />} />
-                        <Route path= '/article/index' element={ <ArticleIndex />} />
+                        <Route path='/profile' element={<Profile />} />
                         <Route path='/textEditor' element={<TextEditor />} />
+                        <Route path= '/article/index' element={ <ArticleIndex />} />
                         <Route path='/modify/:article_id' element={<ArticleModify mode='modify' />} />
                         <Route path='/article/:user/:article_id' element={<ArticleContent />} />
                         <Route path='/404' element={<NotFound />} />

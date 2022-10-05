@@ -16,7 +16,7 @@ class PictureItem extends Component {
 
                     <div className="images-head">
                         <div className="images-head-display">
-                            <img onClick={e => this.onClickHandleImage(e)} src={this.props.imageUrl} />
+                            <img onClick={e => this.onClickHandleImage(e)} src={this.props.imageUrl} alt="" />
                         </div>
                     </div>
                     <div className="images-message">
@@ -53,7 +53,7 @@ class PictureItem extends Component {
     handleClickDelete = (e) => {
         console.log("delete Image");
         $.ajax({
-            url: "http://192.168.43.142/image/deleteImage/",
+            url: "http://150.158.182.65/image/deleteImage/",
             type: "get",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,

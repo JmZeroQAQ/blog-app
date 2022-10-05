@@ -10,7 +10,7 @@ let ajaxInit = -1;
 
 const refreshToken = () => {
     $.ajax({
-        url: "http://192.168.43.142/token/refresh/",
+        url: "http://150.158.182.65/token/refresh/",
         type: "post",
         data: {
             refresh: TOKEN.refresh_token,
@@ -18,18 +18,15 @@ const refreshToken = () => {
 
         success: (resp) => {
             TOKEN.access_token = resp.access;
-            console.log(TOKEN);
         },
 
         // 刷新令牌过期了
         error: (resp) => {
-            console.log(resp);
             TOKEN.access_token = "";
             TOKEN.refresh_token = "";
             // localStorage.removeItem("refresh_token");
             if(refreshEventId !== -1) {
-                clearInterval(refreshEventId);
-                console.log("清除周期函数");
+                clearInterval(refreshEventId); // 清理周期函数
                 refreshEventId = -1;
             }
 
@@ -41,7 +38,7 @@ const refreshToken = () => {
 const add_listening_events_refresh = () => {
 
     ajaxInit =  $.ajax({
-        url: "http://192.168.43.142/token/refresh/",
+        url: "http://150.158.182.65/token/refresh/",
         type: "post",
         data: {
             refresh: TOKEN.refresh_token,
@@ -60,7 +57,6 @@ const add_listening_events_refresh = () => {
 
         // 刷新令牌过期了
         error: (resp) => {
-            console.log(resp);
             TOKEN.access_token = "";
             TOKEN.refresh_token = "";
 

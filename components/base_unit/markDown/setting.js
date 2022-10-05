@@ -59,6 +59,7 @@ const shortcutKey = [
 
 const placeholder = `
 请输入内容,支持markdown语法
+支持直接粘贴图片
 
 <Ctrl + Q> 预览
 <Ctrl + B> 加粗
@@ -68,6 +69,7 @@ const placeholder = `
 <Ctrl + K> 插入代码块
 <Ctrl + P> 插入一行代码
 <Ctrl + Shift + I> 插入图片链接
+
 `;
 
 export {

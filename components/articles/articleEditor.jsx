@@ -20,11 +20,15 @@ class TextEditor extends Component {
         editorHeight: 416, //编辑器高度
         preview: false,
         isPublic: true,
+        storageButton: true,
+        submitButton: true,
     } 
     // 编辑器的实例对象
     refArticleEditor = React.createRef();
 
     componentDidMount() {
+        $('.navbar-create').addClass("active");
+
         let title, keywords, textValue;
 
         title = localStorage.getItem("EditorTitle") || "";
@@ -44,6 +48,10 @@ class TextEditor extends Component {
         });
     }
 
+    componentWillUnmount() {
+        $('.navbar-create').removeClass("active");
+    }
+
     render() { 
         return (
             <React.Fragment>
@@ -61,7 +69,7 @@ class TextEditor extends Component {
 
                         <div className="article-editor-body">
                             <div style={this.getEditorContainerStyle()} className="artcile-editor-body-container">
-                                <div style={{height: "100%"}} className="article-editor-body-textEditor">
+                                <div onPaste={this.handlePaste} style={{height: "100%"}} className="article-editor-body-textEditor">
                                     <BaseEditor 
                                         newref={this.refArticleEditor}
                                         theme='solarized_light'
@@ -91,7 +99,7 @@ class TextEditor extends Component {
 
                             <div className="article-editor-body-button">
                                 <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
-                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>{this.props.mode ? "修改": "提交"}</button>
+                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>{"提交"}</button>
                             </div>
 
                         </div>
@@ -104,6 +112,51 @@ class TextEditor extends Component {
                 </Card>
             </React.Fragment>
         );
+    }
+
+    // 实现图片粘贴
+    handlePaste = (e) => {
+        let image = e.clipboardData.files[0];
+        if(!image) {
+            return ;
+        }
+
+        let imageName = image.name;
+        let imageType = imageName.split('.');
+        let imageSize = image.size;
+        imageType = imageType[1];
+
+        if(imageType !== "png" && imageType !== "jpg" && imageType !== 'gif' && imageType !== "jpeg") {
+            return ;
+        }
+
+        if (imageSize <= 1 * 1024 * 1024) { // Unit: MB
+            let data = new FormData();
+            data.append("file", image);
+
+            $.ajax({
+                url: "http://150.158.182.65/image/articleImageUpload/",
+                type: "post",
+                headers:{
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+                data: data,
+                processData: false,
+                contentType: false,
+
+                success: (resp) => {
+                    if(resp.result === "success") {
+                        let imageUrl = "http://150.158.182.65" + resp.imageUrl;
+                        imageUrl = `![](${imageUrl})` ;
+                        let editor = this.refArticleEditor.current.editor;
+                        editor.insert(imageUrl);
+                    }
+                    else {
+                        console.log(resp.result);
+                    }
+                }
+            });
+        }
     }
 
     changeIsPublic = (flag) => {
@@ -132,7 +185,7 @@ class TextEditor extends Component {
     }
 
     getNotice() {
-        let message = this.props.mode ? "修改成功" : "保存成功!";
+        let message = "保存成功!";
 
         if(this.state.notice) {
             return (
@@ -190,7 +243,8 @@ class TextEditor extends Component {
 
     getBrief() {
         let str = this.state.textValue + '\n';
-        str = str.substring(0, Math.min(str.indexOf('\n'), 60));
+        // str = str.substring(0, Math.min(str.indexOf('\n'), 120));
+        str = str.substring(0, Math.min(str.length, 120));
 
         let brief = str.replace(/[`#*[\]{}~><()@]/g, "");
         brief = brief.trim();
@@ -198,62 +252,76 @@ class TextEditor extends Component {
         return brief;
     }
 
-
+    // 提交button
     handleClickSubmit = () => {
-        let title = $('.articleEditor-title').val();
-        let keywords = $('.articleEditor-keywords').val();
-        let content = this.state.textValue + '\n';
-        let brief = this.getBrief();
-        let visible = this.state.isPublic ? "all" : "self";
+        if(this.state.submitButton) {
+            $('.article-editor-btn-submit').css("cursor", "not-allowed");
+            this.setState({submitButton: false});
 
-        $.ajax({
-            url: "http://192.168.43.142/article/create/",
-            type: "post",
-            headers: {
-                'Authorization': "Bearer " + TOKEN.access_token,
-            },
-
-            data: {
-                title,
-                content,
-                keywords,
-                brief,
-                visible,
-            },
-
-            success: (res) => {
-                if(res.result !== "success") {
-                    if(this.state.errorNotice === false) {
-                        this.setState({errorNotice: true, errorMessage: "提交失败!"});
-                        setTimeout(() => {
-                            this.setState({errorNotice: false});
-                        }, 5 * 1000); // unit: ms
+            let title = $('.articleEditor-title').val();
+            let keywords = $('.articleEditor-keywords').val();
+            let content = this.state.textValue + '\n';
+            let brief = this.getBrief();
+            let visible = this.state.isPublic ? "all" : "self";
+    
+            $.ajax({
+                url: "http://150.158.182.65/article/create/",
+                type: "post",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                data: {
+                    title,
+                    content,
+                    keywords,
+                    brief,
+                    visible,
+                },
+    
+                success: (res) => {
+                    if(res.result !== "success") {
+                        if(this.state.errorNotice === false) {
+                            this.setState({errorNotice: true, errorMessage: res.result});
+                            setTimeout(() => {
+                                $('.article-editor-btn-submit').css("cursor", "pointer");
+                                this.setState({errorNotice: false, submitButton: true});
+                            }, 2 * 1000); // unit: ms
+                        }
                     }
-                }
-                else {
-                    let articleId = res.articleId;
-                    if(articleId !== '') {
-                        let username = User.getUserName();
-                        window.location.href = `/article/${username}/${articleId}/`;
+                    else {
+                        $('.article-editor-btn-submit').css("cursor", "pointer");
+                        let articleId = res.articleId;
+                        if(articleId !== '') {
+                            let username = User.getUserName();
+                            window.location.href = `/article/${username}/${articleId}/`;
+                        }
                     }
-                }
-            },
-        });
+                },
+            });
+        }
     }
 
+    // 保存button
     handleClickStorage = () => {
-        let title = $('.articleEditor-title').val();
-        let keywords = $('.articleEditor-keywords').val();
+        if(this.state.storageButton) {
+            $('.article-editor-btn-storage').css("cursor", "not-allowed");
 
-        localStorage.setItem("EditorTitle", title)
-        localStorage.setItem("Editorkeywords", keywords);
-        localStorage.setItem("EditorValue", this.state.textValue);
+            this.setState({storageButton: false, notice: true},
+                () => {
+                    setTimeout(() => {
+                        this.setState({storageButton: true, notice: false})
+                        $('.article-editor-btn-storage').css("cursor", "pointer");
+                    }, 0.8 * 1000);  
+                }
+            );
 
-        if(this.state.notice === false) {
-            this.setState({notice: true});
-            setTimeout(() => {
-                this.setState({notice: false});
-        }, 5 * 1000); //单位: ms
+            let title = $('.articleEditor-title').val();
+            let keywords = $('.articleEditor-keywords').val();
+
+            localStorage.setItem("EditorTitle", title)
+            localStorage.setItem("Editorkeywords", keywords);
+            localStorage.setItem("EditorValue", this.state.textValue);
         }
     }
 

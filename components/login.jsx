@@ -102,7 +102,7 @@ class Login extends Component {
         $password.val("");
         
         $.ajax({
-            url: "http://192.168.43.142/token/",
+            url: "http://150.158.182.65/token/",
             type: "post",
             data: {
                 username,
@@ -158,7 +158,7 @@ class Login extends Component {
         }
 
         $.ajax({
-            url: "http://192.168.43.142/user/register/",
+            url: "http://150.158.182.65/user/register/",
             type: "POST",
             data: {
                 username,
@@ -167,7 +167,6 @@ class Login extends Component {
             },
 
             success: (resp) => {
-                console.log(resp);
                 if(resp.result !== 'success')
                     this.setState({error_message: resp.result});
                 else {
@@ -180,7 +179,6 @@ class Login extends Component {
 
 const mapDispatchToProps = {
     changeUserStat: (newStat) => {
-        console.log(newStat);
         return {
             type: ACTIONS.changeUserStat,
             newStat,

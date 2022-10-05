@@ -24,11 +24,13 @@ class ArticleModify extends Component {
             preview: false,
             load: false,
             isPublic: true,
+            storageButton: true,
+            submitButton: true,
         }
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://192.168.43.142/article/get/",
+                url: "http://150.158.182.65/article/get/",
                 type: "get",
                 data: {
                     articleId: this.props.params.article_id,
@@ -50,7 +52,6 @@ class ArticleModify extends Component {
                     }
                     else {
                         window.location.href = '/404';
-                        console.log(resp);
                     }
                 }
             });
@@ -159,7 +160,7 @@ class ArticleModify extends Component {
         if(this.state.notice) {
             return (
                 <NoticeToast 
-                    message = {"修改成功"}
+                    message = {"保存成功"}
                     handleClick = {this.handleClickNotice}
                 />
             );
@@ -213,7 +214,7 @@ class ArticleModify extends Component {
 
     getBrief() {
         let str = this.state.textValue + '\n';
-        str = str.substring(0, Math.min(str.indexOf('\n'), 60));
+        str = str.substring(0, Math.min(str.length, 120));
 
         let brief = str.replace(/[`#*[\]{}~><()@]/g, "");
         brief = brief.trim();
@@ -223,60 +224,72 @@ class ArticleModify extends Component {
 
 
     handleClickSubmit = () => {
-        let title = $('.articleEditor-title').val();
-        let keywords = $('.articleEditor-keywords').val();
-        let content = this.state.textValue + '\n';
-        let brief = this.getBrief();
-        let visible = this.state.isPublic ? "all" : "self";
+        if(this.state.submitButton) {
+            $('.article-editor-btn-submit').css("cursor", "not-allowed");
+            this.setState({submitButton: false});
 
-        $.ajax({
-            url: "http://192.168.43.142/article/modify/",
-            type: "post",
-            headers: {
-                'Authorization': "Bearer " + TOKEN.access_token,
-            },
-
-            data: {
-                articleId: this.props.params.article_id,
-                title,
-                content,
-                keywords,
-                brief,
-                visible,
-            },
-
-            success: (res) => {
-                if(res.result !== "success") {
-                    console.log(res);
-                    if(this.state.errorNotice === false) {
-                        this.setState({errorNotice: true, errorMessage: "修改失败!"});
-                        setTimeout(() => {
-                            this.setState({errorNotice: false});
-                        }, 5 * 1000); // unit: ms
+            let title = $('.articleEditor-title').val();
+            let keywords = $('.articleEditor-keywords').val();
+            let content = this.state.textValue + '\n';
+            let brief = this.getBrief();
+            let visible = this.state.isPublic ? "all" : "self";
+    
+            $.ajax({
+                url: "http://150.158.182.65/article/modify/",
+                type: "post",
+                headers: {
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+    
+                data: {
+                    articleId: this.props.params.article_id,
+                    title,
+                    content,
+                    keywords,
+                    brief,
+                    visible,
+                },
+    
+                success: (res) => {
+                    if(res.result !== "success") {
+                        console.log(res);
+                        if(this.state.errorNotice === false) {
+                            this.setState({errorNotice: true, errorMessage: res.result});
+                            setTimeout(() => {
+                                $('.article-editor-btn-submit').css("cursor", "pointer");
+                                this.setState({errorNotice: false, submitButton: true});
+                            }, 2 * 1000); // unit: ms
+                        }
                     }
-                }
-                else {
-                    // success
-                    let username = User.getUserName();
-                    window.location.href = `/article/${username}/${this.props.params.article_id}/`;
-                }
-            },
-        });
+                    else {
+                        // success
+                        $('.article-editor-btn-submit').css("cursor", "pointer");
+                        let username = User.getUserName();
+                        window.location.href = `/article/${username}/${this.props.params.article_id}/`;
+                    }
+                },
+            });
+        }
     }
 
     handleClickStorage = () => {
-        let title = $('.articleEditor-title').val();
-        let keywords = $('.articleEditor-keywords').val();
+        if(this.state.storageButton) {
+            $('.article-editor-btn-storage').css("cursor", "not-allowed");
+            this.setState({storageButton: false, notice: true},
+                () => {
+                    setTimeout(() => {
+                        this.setState({storageButton: true, notice: false})
+                        $('.article-editor-btn-storage').css("cursor", "pointer");
+                    }, 0.8 * 1000);  
+                }
+            );
+            
+            let title = $('.articleEditor-title').val();
+            let keywords = $('.articleEditor-keywords').val();
 
-        localStorage.setItem("EditorTitle", title)
-        localStorage.setItem("Editorkeywords", keywords);
-        localStorage.setItem("EditorValue", this.state.textValue);
-
-        if(this.state.notice === false) {
-            this.setState({notice: true});
-            setTimeout(() => {
-                this.setState({notice: false});
-        }, 5 * 1000); //单位: ms
+            localStorage.setItem("EditorTitle", title)
+            localStorage.setItem("Editorkeywords", keywords);
+            localStorage.setItem("EditorValue", this.state.textValue);
         }
     }
 
