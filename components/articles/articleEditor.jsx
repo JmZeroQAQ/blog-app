@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Card from '../base_unit/card';
 import BaseEditor from '../base_unit/baseEditor';
 import $ from 'jquery';
 import { TOKEN } from '../token/identityToken';
@@ -10,6 +9,8 @@ import { shortcutKey, placeholder } from '../base_unit/markDown/setting';
 import EditorResizable from './editorResizable';
 import ArticleCheckbox from '../base_unit/articleCheckbox';
 import { User } from '../base_unit/User/userInfo';
+import { requestUrl } from '../../API/requestUrl';
+import styled from 'styled-components';
 
 class TextEditor extends Component {
     state = {  
@@ -17,7 +18,7 @@ class TextEditor extends Component {
         notice: false,
         errorNotice: false,
         errorMessage: "",
-        editorHeight: 416, //编辑器高度
+        editorHeight: 380, //编辑器高度
         preview: false,
         isPublic: true,
         storageButton: true,
@@ -55,15 +56,15 @@ class TextEditor extends Component {
     render() { 
         return (
             <React.Fragment>
-                <Card style={this.getCardStyle()}>
-                    <div onKeyDown={(e) => this.handleKeydownPreview(e)} style={{outline: "none"}} tabIndex='-1' className="article-editor">
+                <TextEditorStyle>
+                    <div onKeyDown={(e) => this.handleKeydownPreview(e)} tabIndex='-1' className="article-editor">
                         <div className="article-editor-head row">
-                            <div className="article-editor-head-title col-md-7">
-                                <input type="text" className="form-control articleEditor-title" placeholder='标题' maxLength={30} />
+                            <div className="article-editor-head-title col-md-7 col-sm-12 col-xs-12">
+                                <input type="text" className="form-control articleEditor-title" placeholder='标题' maxLength={20} />
                             </div>
 
-                            <div className="article-editor-head-keyword col-md-5">
-                                <input type="text" className="form-control articleEditor-keywords" placeholder='关键字, 逗号隔开' maxLength={30} />
+                            <div className="article-editor-head-keyword col-md-5 col-sm-12 col-xs-12 mt-2 mt-md-0">
+                                <input type="text" className="form-control articleEditor-keywords" placeholder='关键字, 逗号隔开' maxLength={12} />
                             </div>
                         </div>
 
@@ -98,18 +99,18 @@ class TextEditor extends Component {
                             />
 
                             <div className="article-editor-body-button">
-                                <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
-                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>{"提交"}</button>
+                                <div className="row justify-content-end px-2">
+                                    <button onClick={this.handleClickStorage} className='me-md-3 col-md-2 col-sm-12 col-xs-12 article-editor-btn-storage'>保存</button>
+                                    <button onClick={this.handleClickSubmit} className='mt-sm-2 mt-2 mt-md-0 col-md-2 col-sm-12 col-xs-12 article-editor-btn-submit'>提交</button>
+                                </div>
                             </div>
-
                         </div>
                     </div>
 
                     {this.getNotice()}
                     {this.getErrorNotice()}
-
                     {this.getPreview()}
-                </Card>
+                </TextEditorStyle>
             </React.Fragment>
         );
     }
@@ -135,7 +136,7 @@ class TextEditor extends Component {
             data.append("file", image);
 
             $.ajax({
-                url: "http://150.158.182.65/image/articleImageUpload/",
+                url: `${requestUrl}/image/articleImageUpload/`,
                 type: "post",
                 headers:{
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -146,13 +147,17 @@ class TextEditor extends Component {
 
                 success: (resp) => {
                     if(resp.result === "success") {
-                        let imageUrl = "http://150.158.182.65" + resp.imageUrl;
+                        let imageUrl = `${requestUrl}` + resp.imageUrl;
                         imageUrl = `![](${imageUrl})` ;
                         let editor = this.refArticleEditor.current.editor;
                         editor.insert(imageUrl);
                     }
                     else {
-                        console.log(resp.result);
+                        this.setState({errorNotice: true, errorMessage: "粘贴图片失败!"}, () => {
+                            setTimeout(() => {
+                                this.setState({errorNotice: false})
+                            }, 3 * 1000)
+                        });
                     }
                 }
             });
@@ -217,18 +222,6 @@ class TextEditor extends Component {
         this.setState({textValue: res});
     }
 
-    getCardStyle = () => {
-        const style = {
-            margin: "0 auto",
-            minHeight: "35rem",
-            width: "70%",
-            backgroundColor: "rgba(255, 255, 255, 75%)",
-            boxShadow: "2px 1px 12px #DDDDDD",
-        };
-
-        return style;
-    }
-
     getEditorContainerStyle() {
         let style = {
             height: `${this.state.editorHeight.toString()}px`,
@@ -265,7 +258,7 @@ class TextEditor extends Component {
             let visible = this.state.isPublic ? "all" : "self";
     
             $.ajax({
-                url: "http://150.158.182.65/article/create/",
+                url: `${requestUrl}/article/create/`,
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -340,3 +333,18 @@ class TextEditor extends Component {
 }
 
 export default TextEditor;
+
+const TextEditorStyle = styled.div.attrs((props) => {
+    return {
+        className: "card col-md-10 col-xs-12 col-sm-12 round shadow",
+    };
+})`
+    & {
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    & .article-editor {
+        outline: none;
+    }
+`

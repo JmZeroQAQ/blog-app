@@ -5,6 +5,7 @@ import { Logout } from './token/clearToken';
 import $ from 'jquery';
 import { TOKEN } from './token/identityToken';
 import { User } from './base_unit/User/userInfo';
+import { requestUrl } from '../API/requestUrl';
 
 class NavBarUser extends Component {
     state = {  
@@ -14,7 +15,7 @@ class NavBarUser extends Component {
 
     componentDidMount() {
         $.ajax({
-            url: "http://150.158.182.65/user/getinfo/",
+            url: `${requestUrl}/user/getinfo/`,
             type: "get",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
@@ -26,7 +27,7 @@ class NavBarUser extends Component {
                     User.setUserName(resp.username);
 
                     let avatarUrl = resp.avatarUrl;
-                    if(avatarUrl.includes("media")) avatarUrl = "http://150.158.182.65" + avatarUrl;
+                    if(avatarUrl.includes("media")) avatarUrl = `${requestUrl}` + avatarUrl;
                     User.setUserAvatar(avatarUrl);
 
                     let backgroundUrl = resp.backgroundUrl;
@@ -35,7 +36,7 @@ class NavBarUser extends Component {
                     this.setState({username: resp.username, avatarUrl: avatarUrl});
                 }
                 else {
-                    console.log("获取用户信息失败");
+                    window.location.href = '/404';
                 }
             }, 
         });

@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import Card from '../base_unit/card';
+import styled from 'styled-components';
 import DisplayMarkDown from './displayMarkdown';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad, OnTourist } from '../token/identityToken';
 import { useParams } from 'react-router-dom';
+import { requestUrl } from '../../API/requestUrl';
 
 class ArticleContent extends Component {
     state = {  
         content: "",
-        title: "CSS",
-        author: "JmZeroQAQ",
-        brief: "hello world",
-        time: "2020.4.12 14:00",
-        keywords: "docker, python",
-        visible: "all",
+        title: "",
+        author: "",
+        brief: "",
+        time: "",
+        keywords: "",
+        visible: "",
         load: false,
     } 
     
@@ -21,7 +22,7 @@ class ArticleContent extends Component {
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://150.158.182.65/article/get/",
+                url: `${requestUrl}/article/get/`,
                 type: "get",
                 data: {
                     articleId: this.props.params.article_id,
@@ -62,7 +63,7 @@ class ArticleContent extends Component {
         // 游客访问接口
         OnTourist(() => {
             $.ajax({
-                url: "http://150.158.182.65/article/get/",
+                url: `${requestUrl}/article/get/`,
                 type: "get",
                 data: {
                     articleId: this.props.params.article_id,
@@ -106,19 +107,6 @@ class ArticleContent extends Component {
         );
     }
 
-    getCardStyle = () => {
-        const style = {
-            width: "70%",
-            margin: "0 auto",
-            minHeight: "40rem",
-            backgroundColor: "rgba(255, 255, 255, 100%)",
-            marginBottom: "2rem",
-            boxShadow: "2px 1px 12px #DDDDDD",
-        };
-    
-        return style;
-    }
-
     handleClickModify = () => {
         window.location.href = `/modify/${this.props.params.article_id}`;
     }
@@ -126,8 +114,8 @@ class ArticleContent extends Component {
     getContent() {
         if(this.state.load) {
             return (
-                <Card style={this.getCardStyle()}>
-                    <div className="article-content">
+                <ArticleContentStyle>
+                    <div className="col-12 col-md-9 article-content">
                         <div className="article-head">
                             <h4 style={{color: "#24292F", fontWeight: "bold", marginTop: "10px"}}>{this.state.title}</h4>
                             <div className="article-head-message">
@@ -154,12 +142,12 @@ class ArticleContent extends Component {
                             </div>
                         </div>
                     </div>
-                </Card>
+                </ArticleContentStyle>
             );
         }
     }
 }
- 
+
 //eslint-disable-next-line
 export default (props) => (
     <ArticleContent
@@ -167,3 +155,21 @@ export default (props) => (
         params={useParams()}
     />
 );
+
+const ArticleContentStyle = styled.div.attrs(props => {
+    return {
+        className: "row",
+    }
+})`
+& .article-content {
+        margin: 0 auto;
+        min-height: 35rem;
+        background-color: white;
+        margin-bottom: 2rem;
+        border: 1px solid #DDDDDD;
+        border-radius: 10px;
+        box-shadow: 2px 1px 12px #DDDDDD;
+        padding: 30px;
+    }
+
+`

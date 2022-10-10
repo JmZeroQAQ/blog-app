@@ -7,13 +7,14 @@ import PicturebedMessage from './pictures/picturebedMessage';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from './token/identityToken';
 import NoticeToast from './base_unit/noticeToast';
+import { requestUrl } from '../API/requestUrl';
 
 class PictureBed extends Component {
     state = {  
         previewShow: false,
         previewUrl: "",
         images: [],
-        isUpdate: false,
+        isUpdate: false, // 每当进行操作(添加或者删除)都会变成true，然后messagr组件都会重新获取用户图片信息
         currentCount: 0,
         notice: false,
         errorNotice: false,
@@ -21,12 +22,12 @@ class PictureBed extends Component {
     } 
 
     componentDidMount() {
-        $('.navbar-picturebed').addClass("active");
         $(window).on('scroll.image', this.handleScroll);
+        $('.navbar-picturebed').addClass("active");
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://150.158.182.65/image/getImageList/",
+                url: `${requestUrl}/image/getImageList/`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -45,7 +46,11 @@ class PictureBed extends Component {
                         });
                     }
                     else {
-                        console.log(resp.result);
+                        this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                            setTimeout(() => {
+                                this.setState({errorNotice: false});
+                            }, 3 * 1000);
+                        });
                     }
                 },
             });
@@ -67,41 +72,45 @@ class PictureBed extends Component {
                 /> : null}
                 <Card style={this.getCardStyle()}>
                     <PictureBedStyle>
-                        <div className="picturebed-head ">
-                            <div className="picturebed-upload">
-                                <div className="picturebed-upload-area">
-                                    <div onClick={this.handleClickUpload} className="picturebed-upload-area-icon">
+                        <div className="picturebed-head row align-items-center">
+                            <div className="picturebed-upload col-md-8 col-sm-12 col-xs-12 px-4">
+                                <div className="picturebed-upload-area row justify-content-start align-items-center">
+                                    <div onClick={this.handleClickUpload} className="col-md-5 col-sm-12 col-xs-12 picturebed-upload-area-icon">
                                         <i className="bi bi-images"></i>
                                         <span>点此处选择图片</span>
                                         <input onChange={this.handleOnChangeUpload} type="file" className="image-upload" accept='image/*'/>
                                     </div>
 
-                                    <div className="picturebed-upload-area-declare">
+                                    <div className="d-none d-lg-block col-md-7 col-sm-12 col-xs-12 picturebed-upload-area-declare">
                                         <span className='declare-title'>注意事项</span>
-
                                         <ul className='declare-list'>
                                             <li>图片大小应小于10MB</li>
                                             <li>上传图片不会增加水印</li>
-                                            <li>上传图片后需要等待一段时间后才可以访问</li>
-                                            <li>你可以在你的图片列表里查看你上传的所有图片</li>
+                                            <li>图片列表只显示你在这里上传的图片</li>
+                                            <li>上传图片后需要等待一段时间才会显示出来</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            {<PicturebedMessage
-                                isUpdate = {this.state.isUpdate}
-                                switchIsUpdate = {this.switchIsUpdate}
-                            />}
+                            <div className="col-xs-12 col-md-4 col-sm-12 mt-4 mt-md-0">
+                                {
+                                    <PicturebedMessage
+                                    isUpdate = {this.state.isUpdate}
+                                    switchIsUpdate = {this.switchIsUpdate}
+                                    />
+                                }
+                            </div>
+                            
                         </div>
 
                         <div className="picturebed-body">
                             <div className="picturedbed-body-head">
                                 <h5>图片列表</h5>
-                                <i onClick={this.handleClickUpdate} title='刷新' className="bi bi-funnel-fill"></i>
+                                <i onClick={this.handleClickUpdate} title='刷新' className="picturedbed-body-refresh bi bi-funnel-fill"></i>
                             </div>
 
-                            <div className="picturebed-body-list">
+                            <div className="row">
                                 {
                                     this.state.images.map(image => {
                                         return (
@@ -110,7 +119,7 @@ class PictureBed extends Component {
                                                 switchPreview={this.switchPreview}
                                                 imageUpdate={this.handleClickUpdate}
                                                 imageId={image.imageId}
-                                                imageUrl={"http://150.158.182.65" + image.imageUrl}
+                                                imageUrl={`${requestUrl}` + image.imageUrl}
                                                 imageSize={image.imageSize}
                                                 imageCreateTime={image.imageCreateTime}
                                             />
@@ -132,7 +141,7 @@ class PictureBed extends Component {
             margin: "0 auto",
             minHeight: "35rem",
             width: "85%",
-            backgroundColor: "white",
+            backgroundColor: "#EFEFEF",
             boxShadow: "2px 1px 12px #DDDDDD",
         };
 
@@ -199,7 +208,7 @@ class PictureBed extends Component {
                     data.append("file", image);
                     
                     $.ajax({
-                        url: "http://150.158.182.65/image/upload/",
+                        url: `${requestUrl}/image/upload/`,
                         type: "post",
                         headers: {
                             "Authorization": "Bearer " + TOKEN.access_token,
@@ -237,7 +246,7 @@ class PictureBed extends Component {
     // 在更新数据后刷新数据
     handleClickUpdate = () => {
         $.ajax({
-            url: "http://150.158.182.65/image/getImageList/",
+            url: `${requestUrl}/image/getImageList/`,
             type: "get",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
@@ -256,7 +265,7 @@ class PictureBed extends Component {
                     });
                 }
                 else {
-                    this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                    this.setState({errorNotice: true, errorMessage: resp.result, images: [], isUpdate: true, currentCount: 0}, () => {
                         setTimeout(() => {
                             this.setState({errorNotice: false});
                         }, 3 * 1000);
@@ -274,7 +283,7 @@ class PictureBed extends Component {
         // 滚动距离 + 视窗高度 === 页面高度，说明到底了.
         if($(document).scrollTop() >= $(document).height() - $(window).height()) {
             $.ajax({
-                url: "http://150.158.182.65/image/getImageList/",
+                url: `${requestUrl}/image/getImageList/`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -295,7 +304,11 @@ class PictureBed extends Component {
                         });
                     }
                     else {
-                        console.log(resp.result);
+                        this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                            setTimeout(() => {
+                                this.setState({errorNotice: false});
+                            }, 3 * 1000);
+                        });
                     }
                 },
             });
@@ -306,68 +319,20 @@ class PictureBed extends Component {
 const PictureBedStyle = styled.div`
 
     & .picturebed-head {
-        height: 200px;
-        border: 1px solid #E8E8E8;
-        background-color: #CAD3C8;
         
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 20px;
-        border-radius: 5px;
-        box-shadow: 1px 2px 10px #CAD3C8;
-    }
-
-    & .picturebed-message {
-        height: 120px;
-        width: 30%;
-        padding: 10px;
-        border: 1px solid #E8E8E8;
-        background-color: #f7f1e3;
-        position: relative;
-        border-radius: 5px;
-        box-shadow: 1px 4px 10px #95A5A6;
-    }
-
-    & .picturebed-message-title {
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    & .message-item-container {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    & .picturebed-message-item {
-        font-size: 16px;
-        color: #9D9D9D;
-    }
-
-    & .picturebed-message-item + span {
-        font-size: 16px;
-        color: #9D9D9D;
-    }
-
-    & .picturebed-upload {
-        width: 65%;
     }
 
     & .picturebed-upload-area {
-        width: 100%;
-        height: 140px;
-        background-color: #f7f1e3;
-        margin-right: 2rem;
+        background-color: white;
         border-radius: 5px;
-        box-shadow: 1px 2px 10px #95A5A6;
-        display: flex;
-        /* justify-content: space-between; */
+        border: 1px solid #95A5A6;
     }
 
     & .picturebed-upload-area-icon {
         width: 144px;
         height: 140px;
-        background-color: #f7f1e3;
+        margin: 0 auto;
+        background-color: #FAFAFA;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -418,10 +383,10 @@ const PictureBedStyle = styled.div`
         min-height: 20rem;
         margin-top: 25px;
         padding: 20px;
-        border: 1px solid #E8E8E8;
-        background-color: #CAD3C8;
+        border: 1px solid #95A5A6;
+        background-color: white;
         border-radius: 5px;
-        box-shadow: 1px 4px 10px #CAD3C8;
+        box-shadow: 1px 4px 4px #CAD3C8;
     }
 
     & .picturedbed-body-head {
@@ -429,19 +394,17 @@ const PictureBedStyle = styled.div`
         justify-content: space-between; 
     }
 
-    & .picturedbed-body-head i {
+    & .picturedbed-body-refresh {
         color: #3498DB;
         font-size: 22px;
     }
 
-    & .picturedbed-body-head h5 {
-        font-weight: bold;
+    & .picturedbed-body-refresh:hover {
+        color: #0056B3;
     }
 
-    & .picturebed-body-list {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+    & .picturedbed-body-head h5 {
+        font-weight: bold;
     }
 `
 

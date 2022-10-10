@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Card from './base_unit/card';
 import styled from 'styled-components';
 import $ from "jquery";
 import HomeItem from './base_unit/homeItem';
 import HomeHead from './base_unit/homehead';
+import { requestUrl } from '../API/requestUrl';
 
 class Home extends Component {
     state = {  
@@ -12,7 +12,7 @@ class Home extends Component {
 
     componentDidMount() {
         $.ajax({
-            url: "http://150.158.182.65/image/getHomeImageList/",
+            url: `${requestUrl}/image/getHomeImageList/`,
             type: "get",
             
             success: (resp) => {
@@ -29,24 +29,25 @@ class Home extends Component {
     render() { 
         return (
             <React.Fragment>
-                <Card style={this.getCardStyle()}>
-                    <HomeStyle>
-                        <HomeHead 
-                            updateImages = {this.updateImages}
-                        />
+                <HomeStyle>
+                    <HomeHead 
+                        updateImages = {this.updateImages}
+                    />
 
+                    <div className="home-body-images">
                         {
                             this.state.imageList.map((image) => {
                                 return (
                                     <HomeItem 
                                         key={parseInt(image.imageId)}
-                                        imageUrl = {"http://150.158.182.65" + image.imageUrl}
+                                        imageUrl = {`${requestUrl}` + image.imageUrl}
                                     />
                                 );
                             })
                         }
-                    </HomeStyle>
-                </Card>
+                    </div>
+
+                </HomeStyle>
             </React.Fragment>
         );
     }
@@ -54,7 +55,7 @@ class Home extends Component {
     // 更新图片
     updateImages = () => {
         $.ajax({
-            url: "http://150.158.182.65/image/getHomeImageList/",
+            url: `${requestUrl}/image/getHomeImageList/`,
             type: "get",
             
             success: (resp) => {
@@ -67,23 +68,24 @@ class Home extends Component {
             }
         });
     }
-
-    getCardStyle = () => {
-        const style = {
-            margin: "0 auto",
-            minHeight: "35rem",
-            width: "75%",
-            backgroundColor: "rgba(255, 255, 255, 10%)",
-            // boxShadow: "2px 1px 12px #DDDDDD",
-            border: "none",
-        };
-
-        return style;
-    }
 }
- 
-const HomeStyle = styled.div`
-    
-`
 
 export default Home;
+
+const HomeStyle = styled.div.attrs(props => {
+    return {
+        className: "card",
+    }
+})`
+    & {
+        margin: 0 auto;
+        min-height: 35rem;
+        width: 75%;
+        background-color: rgba(255, 255, 255, 10%);
+        border: none;
+    }
+
+    & .home-body-images {
+        width: 100%;
+    }
+`

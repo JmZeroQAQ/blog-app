@@ -4,10 +4,11 @@ import $ from 'jquery';
 import { User, OnUserInfoLoad } from './User/userInfo';
 import NoticeToast from './noticeToast';
 import { TOKEN } from '../token/identityToken';
+import { requestUrl } from '../../API/requestUrl';
 
 class HomeHead extends Component {
     state = {  
-        avatarUrl: "http://150.158.182.65/static/images/avatar.jpg",
+        avatarUrl: `${requestUrl}/static/images/avatar.jpg`,
         notice: false,
         noticeMessage: "",
         messageType: "",
@@ -26,12 +27,12 @@ class HomeHead extends Component {
             <React.Fragment>
                 <HomeHeadStyle>
                     <div className="head card">
-                        <div className="head-content row">
-                            <div className="head-content-image col-md-1 col-xs-1">
+                        <div className="row align-items-center p-2">
+                            <div className="d-none d-md-block col-md-1 head-content-image">
                                 <img src={this.state.avatarUrl} alt="" />
                             </div>
 
-                            <div className="head-content-button col-md-11 col-xs-11">
+                            <div className="col-md-11 col-xs-12 head-content-button">
                                 <button onClick={this.handleClickUploadImage}>分享一张图片吧！</button>
                                 <input onChange={this.handleOnChangeUpload} type="file" className="image-upload" accept='image/*'/>
                             </div>
@@ -88,7 +89,7 @@ class HomeHead extends Component {
                     data.append("file", image);
                     
                     $.ajax({
-                        url: "http://150.158.182.65/image/homeImageUpload/",
+                        url: `${requestUrl}/image/homeImageUpload/`,
                         type: "post",
                         headers: {
                             "Authorization": "Bearer " + TOKEN.access_token,
@@ -127,27 +128,15 @@ const HomeHeadStyle = styled.div`
         padding: 0 20px;
     }
 
-    & .head-content-image {
-        height: 4rem;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
-
     & .head-content-image img {
+        display: block;
+        margin: 0 auto;
+
         width: 50px;
         height: 50px;
         border: 1px solid #EFEFEF;
         border-radius: 50%;
         object-fit: cover;
-    }
-
-    & .head-content-button {
-        height: 4rem;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
     }
 
     & .head-content-button button {

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from '../token/identityToken';
+import { requestUrl } from '../../API/requestUrl';
+import styled from 'styled-components';
 
 class PicturebedMessage extends Component {
     state = {  
@@ -12,7 +14,7 @@ class PicturebedMessage extends Component {
     componentDidMount() {
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://150.158.182.65/image/getUserImageInfo",
+                url: `${requestUrl}/image/getUserImageInfo`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -27,7 +29,7 @@ class PicturebedMessage extends Component {
                         });
                     }
                     else {
-                        console.log(resp.result);
+                        window.location.href = '/404';
                     }
                 }
             })
@@ -37,7 +39,7 @@ class PicturebedMessage extends Component {
     componentDidUpdate() {
         if(this.props.isUpdate) {
             $.ajax({
-                url: "http://150.158.182.65/image/getUserImageInfo",
+                url: `${requestUrl}/image/getUserImageInfo`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -52,7 +54,7 @@ class PicturebedMessage extends Component {
                         });
                     }
                     else {
-                        console.log(resp.result);
+                        window.location.href = '/404';
                     }
                 }
             });
@@ -64,7 +66,7 @@ class PicturebedMessage extends Component {
     render() { 
         return (
             <React.Fragment>
-                <div className="picturebed-message">
+                <PicturebedMessageStyle>
                     <div className='picturebed-message-title'>图床信息</div>
                     <div className='message-item-container'>
                         <span className='picturebed-message-item'>可用空间: </span>
@@ -80,10 +82,39 @@ class PicturebedMessage extends Component {
                         <span className='picturebed-message-item'>图片数量: </span>
                         <span>{this.state.imageCount} 张</span>
                     </div>
-                </div>
+                </PicturebedMessageStyle>
             </React.Fragment>
         );
     }
 }
  
 export default PicturebedMessage;
+
+const PicturebedMessageStyle = styled.div`
+    & {
+        width: 100%;
+        background-color: white;
+        border: 1px solid #95A5A6;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    & .picturebed-message-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    & .message-item-container {
+        /* background-color: red; */
+    }
+
+    & .picturebed-message-item {
+        font-size: 16px;
+        color: #9D9D9D;
+    }
+
+    & .picturebed-message-item + span {
+        font-size: 16px;
+        color: #9D9D9D;
+    }
+`

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Card from '../base_unit/card';
 import ArticleIndexItem from './articleIndexItem';
 import $ from 'jquery';
 import { checkedSet } from './checkedArticleSet';
@@ -8,6 +7,7 @@ import {TOKEN, OnTokenLoad} from '../token/identityToken';
 import SearchBar from '../base_unit/searchBar';
 import BackTop from '../base_unit/BackTop';
 import NoticeToast from '../base_unit/noticeToast';
+import { requestUrl } from '../../API/requestUrl';
 
 class ArticleIndex extends Component {
     state = {  
@@ -30,7 +30,7 @@ class ArticleIndex extends Component {
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://150.158.182.65/article/getlist/",
+                url: `${requestUrl}/article/getlist/`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -70,55 +70,56 @@ class ArticleIndex extends Component {
     render() { 
         return (
             <React.Fragment>
-                <Card style={this.getCardStyle()}>
-                    <BackTop />
-                    <SearchBar 
-                        searchValue={this.state.searchValue}
-                        handleChange={this.handleInputChange}
-                        onSearch={this.onSearch}
-                    />
+                <ArticleIndexStyle>
+                    <div className="article-index col-md-10 col-sm-12">
+                        <BackTop />
+                        <SearchBar 
+                            searchValue={this.state.searchValue}
+                            handleChange={this.handleInputChange}
+                            onSearch={this.onSearch}
+                        />
 
-                    {this.getOperateBox()}
-                    <ArticleBackendStyle>
-                        <table className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input onChange={this.handleChangeChecked} checked={this.state.checked} className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                    </th>
-                                    <th >标题</th>
-                                    <th >作者</th>
-                                    <th >时间</th>
-                                    <th >操作</th>
-                                </tr>
-                            </thead>
-                        
-                            <tbody>
-                                {this.state.articles.map(e => {
-                                    return (
-                                        <ArticleIndexItem 
-                                            key={e.aid}
-                                            title={e.title}
-                                            user={e.author}
-                                            time={e.time}
-                                            aid={e.aid}
-                                            articleCount={this.state.articles.length}
-                                            checkAll={this.state.checkAll}
-                                            changeCheckAll={this.changeCheckAll}
-                                            changeChecked={this.changeChecked}
-                                            checked={this.state.checked}
-                                            updateSelectedLength={this.updateSelectedLength}
-                                            updateArticles={this.updateArticles}
-                                        />
-                                    );
-                                })}
-                            </tbody>
+                        {this.getOperateBox()}
+                        <ArticleBackendStyle>
+                            <table className="article-index-table table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th className='table-head-select'>
+                                            <input onChange={this.handleChangeChecked} checked={this.state.checked} className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                        </th>
+                                        <th className='table-head-title'>标题</th>
+                                        {/* <th >作者</th> */}
+                                        <th >时间</th>
+                                        <th className='table-head-controler'>操作</th>
+                                    </tr>
+                                </thead>
+                            
+                                <tbody>
+                                    {this.state.articles.map(e => {
+                                        return (
+                                            <ArticleIndexItem 
+                                                key={e.aid}
+                                                title={e.title}
+                                                user={e.author}
+                                                time={e.time}
+                                                aid={e.aid}
+                                                articleCount={this.state.articles.length}
+                                                checkAll={this.state.checkAll}
+                                                changeCheckAll={this.changeCheckAll}
+                                                changeChecked={this.changeChecked}
+                                                checked={this.state.checked}
+                                                updateSelectedLength={this.updateSelectedLength}
+                                                updateArticles={this.updateArticles}
+                                            />
+                                        );
+                                    })}
+                                </tbody>
 
-                        </table>
-                    </ArticleBackendStyle>
-
+                            </table>
+                        </ArticleBackendStyle>
+                        </div>
                     {this.getNotice()}
-                </Card>
+                </ArticleIndexStyle>
             </React.Fragment>
         );
     }
@@ -148,7 +149,7 @@ class ArticleIndex extends Component {
             checkedSet.Init();
 
             $.ajax({
-                url: "http://150.158.182.65/article/search/",
+                url: `${requestUrl}/article/search/`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -185,53 +186,43 @@ class ArticleIndex extends Component {
         this.setState({searchValue: e.target.value});
     }
 
-    getCardStyle = () => {
-        const style = {
-            margin: "0 auto",
-            minHeight: "35rem",
-            width: "85%",
-            backgroundColor: "rgba(255, 255, 255, 100%)",
-            boxShadow: "2px 1px 12px #DDDDDD",
-        };
-
-        return style;
-    }
-
     getOperateBox() {
         if(this.state.selectedLength) {
             return (
                 <React.Fragment>
                     <OperateBoxStyle>
-                        <div className="select">
+                        <div className="select col-12 col-lg-4">
                             <div className='select-name'><span>已选择: </span></div>
                             <div className='select-message'>{this.state.selectedLength}/{this.state.articles.length}</div>
                         </div>
 
-                        <div className="operator">
-                            <div className='select-name'><span>选择操作: </span></div>
+                        <div className="operator col-12 col-lg-4">
+                            <div className="operator-content">
+                                <div className='select-name'><span>选择操作: </span></div>
 
-                            <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 1})} className="form-check-input" type="radio" id='operate-item1' name='operate-item1' readOnly={true} checked={this.state.current_select === 1 ? true : false}/>
-                                <label htmlFor='operate-item1'>删除</label>
+                                <div className="operator-item">
+                                    <input onClick={() => this.setState({current_select: 1})} className="form-check-input" type="radio" id='operate-item1' name='operate-item1' readOnly={true} checked={this.state.current_select === 1 ? true : false}/>
+                                    <label htmlFor='operate-item1'>删除</label>
+                                </div>
+
+                                <div className="operator-item">
+                                    <input onClick={() => this.setState({current_select: 2})} className="form-check-input" type="radio" id='operate-item2' name='operate-item2' readOnly={true} checked={this.state.current_select === 2 ? true : false}/>
+                                    <label htmlFor='operate-item2'>隐藏</label>
+                                </div>
+
+                                <div className="operator-item">
+                                    <input onClick={() => this.setState({current_select: 3})} className="form-check-input" type="radio" id='operate-item3' name='operate-item3' readOnly={true} checked={this.state.current_select === 3 ? true : false}/>
+                                    <label htmlFor='operate-item3'>公开</label>
+                                </div>
                             </div>
-
-                            <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 2})} className="form-check-input" type="radio" id='operate-item2' name='operate-item2' readOnly={true} checked={this.state.current_select === 2 ? true : false}/>
-                                <label htmlFor='operate-item2'>隐藏</label>
-                            </div>
-
-                            <div className="operator-item">
-                                <input onClick={() => this.setState({current_select: 3})} className="form-check-input" type="radio" id='operate-item3' name='operate-item3' readOnly={true} checked={this.state.current_select === 3 ? true : false}/>
-                                <label htmlFor='operate-item3'>公开</label>
-                            </div>
-
                         </div>
 
-                        <div className="select-action">
-                            <div className='select-name'><span>操作: </span></div>
-                            <button onClick={e => this.handleClickAction(e)} className='btn btn-primary'>批量修改</button>
+                        <div className="select-action col-12 col-lg-4 mb-2 mb-lg-0">
+                            <div className="d-flex justify-content-lg-end align-items-center">
+                                <div className='select-name'><span>操作: </span></div>
+                                <button onClick={e => this.handleClickAction(e)} className='btn btn-primary'>批量修改</button>
+                            </div>
                         </div>
-
                     </OperateBoxStyle>
                 </React.Fragment>
             );
@@ -244,7 +235,7 @@ class ArticleIndex extends Component {
         // 删除
         if(this.state.current_select === 1) {
             $.ajax({
-                url: "http://150.158.182.65/article/batchOperate/",
+                url: `${requestUrl}/article/batchOperate/`,
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -277,7 +268,7 @@ class ArticleIndex extends Component {
 
         else if(this.state.current_select === 2) {
             $.ajax({
-                url: "http://150.158.182.65/article/batchOperate/",
+                url: `${requestUrl}/article/batchOperate/`,
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -310,7 +301,7 @@ class ArticleIndex extends Component {
 
         else if(this.state.current_select === 3) {
             $.ajax({
-                url: "http://150.158.182.65/article/batchOperate/",
+                url: `${requestUrl}/article/batchOperate/`,
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -375,7 +366,7 @@ class ArticleIndex extends Component {
         this.setState({current_count: 0, searchValue: "", mode: "normal", selectedLength: 0, checkAll: "cancelAll"}, () => {
             checkedSet.Init();
             $.ajax({
-                url: "http://150.158.182.65/article/search/",
+                url: `${requestUrl}/article/search/`,
                 type: "get",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -414,7 +405,7 @@ class ArticleIndex extends Component {
         if($(document).scrollTop() >= $(document).height() - $(window).height()) {
             if(this.state.mode === "normal") {
                 $.ajax({
-                    url: "http://150.158.182.65/article/getlist/",
+                    url: `${requestUrl}/article/getlist/`,
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -448,7 +439,7 @@ class ArticleIndex extends Component {
             
             else if(this.state.mode === "search") {
                 $.ajax({
-                    url: "http://150.158.182.65/article/search/",
+                    url: `${requestUrl}/article/search/`,
                     type: "get",
                     headers: {
                         'Authorization': "Bearer " + TOKEN.access_token,
@@ -483,19 +474,35 @@ class ArticleIndex extends Component {
     }
 }
 
-const OperateBoxStyle = styled.div`
+const ArticleIndexStyle = styled.div.attrs(props => {
+    return {
+        className: "row",
+    }
+})`
+    & .article-index {
+        margin: 0 auto;
+        min-height: 35rem;
+        background-color: white;
+        margin-bottom: 2rem;
+        border: 1px solid #DDDDDD;
+        border-radius: 10px;
+        box-shadow: 2px 1px 12px #DDDDDD;
+        padding: 30px;
+    }
+
+`
+
+const OperateBoxStyle = styled.div.attrs(props => {
+    return {
+        className: "row align-items-center",
+    }
+})`
     box-sizing: border-box;
-    height: 60px;
+    min-height: 60px;
     border: 2px solid #6190E8;
     border-radius: 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     padding: 0 20px;
-
-    & .select {
-
-    }
+    margin-bottom: 20px;
 
     & .select-name {
         display: inline-block;
@@ -510,11 +517,9 @@ const OperateBoxStyle = styled.div`
     & .select-message {
         display: inline-block;
         font-size: 16px;
-
     }
 
-    & .operator {
-        display: inline-block;
+    & .operator-content {
         margin: 0 auto;
     }
 
@@ -528,9 +533,7 @@ const OperateBoxStyle = styled.div`
         margin-right: 10px;
     }
 
-    & .btn {
-        display: inline-block;
-        margin-right: auto;
+    & .select-action button {
         background-color: #F15C18;
         border: none;
         padding: auto 0;
@@ -539,25 +542,28 @@ const OperateBoxStyle = styled.div`
 `
 
 const ArticleBackendStyle = styled.div`
-    & th {
+    & .article-index-table {
+        width: 100%;
+    }
+
+    & thead tr {
+        width: 100%;
         border-bottom: 2px solid black;
     }
 
-    thead>tr>th:nth-child(1) {
-        width: 5%;
+    thead>tr th {
+        padding: 0;
     }
 
-    thead>tr>th:nth-child(2) {
-        width: 50%;
+    & .table-head-select {
+        padding-left: 10px;
     }
 
-    thead>tr>th:nth-child(3) {
-        width: 15%;
+    & .table-head-title {
+        /* width: 45%; */
     }
-    thead>tr>th:nth-child(4) {
-        width: 15%;
-    }
-    thead>tr>th:nth-child(5) {
+
+    & .table-head-controler {
         text-align: center;
     }
 

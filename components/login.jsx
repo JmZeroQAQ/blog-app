@@ -5,6 +5,7 @@ import { add_listening_events_refresh } from './token/refreshToken';
 import { ACTIONS } from './redux/action';
 import { connect } from 'react-redux';
 import { loginModal } from './base_unit/Modal/loginModal';
+import { requestUrl } from '../API/requestUrl';
 
 class Login extends Component {
     state = {  
@@ -26,12 +27,14 @@ class Login extends Component {
                                     type="text" 
                                     className="form-control login-username" 
                                     placeholder='用户名' 
+                                    maxLength={10}
                                 />
                                 <input 
                                     style={{marginTop: "1rem"}} 
                                     type="password" 
                                     className="form-control login-password" 
                                     placeholder='密码' 
+                                    maxLength={18}
                                 />
 
                                 <div className="error-message" style={{color: "red", fontSize: "14px", marginTop: "10px", textAlign: "right"}}>
@@ -50,14 +53,16 @@ class Login extends Component {
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
-                                <input type="text" className="form-control register-username" placeholder='用户名' />
+                                <input type="text" className="form-control register-username" maxLength={10} placeholder='用户名' />
                                 <input 
                                     style={{marginTop: "1rem"}} type="password" 
                                     className="form-control register-password" placeholder='密码' 
+                                    maxLength={18}
                                 />
                                 <input 
                                     style={{marginTop: "1rem"}} type="password" 
                                     className="form-control register-passwordconfirm" placeholder='确认密码' 
+                                    maxLength={18}
                                 />
 
                                 <div className="error-message" style={{color: "red", fontSize: "14px", marginTop: "10px", textAlign: "right"}}>
@@ -102,7 +107,7 @@ class Login extends Component {
         $password.val("");
         
         $.ajax({
-            url: "http://150.158.182.65/token/",
+            url: `${requestUrl}/token/`,
             type: "post",
             data: {
                 username,
@@ -158,7 +163,7 @@ class Login extends Component {
         }
 
         $.ajax({
-            url: "http://150.158.182.65/user/register/",
+            url: `${requestUrl}/user/register/`,
             type: "POST",
             data: {
                 username,

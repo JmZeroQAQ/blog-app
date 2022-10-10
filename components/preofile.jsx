@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Card from './base_unit/card';
 import styled from 'styled-components';
 import $ from 'jquery';
 import { User, OnUserInfoLoad } from './base_unit/User/userInfo';
 import {TOKEN} from './token/identityToken';
 import NoticeToast from './base_unit/noticeToast';
+import { requestUrl } from '../API/requestUrl';
 
 class Profile extends Component {
     state = {  
@@ -25,41 +25,37 @@ class Profile extends Component {
     render() { 
         return (
             <React.Fragment>
-                <Card style={this.getCardStyle()}>
-                    <ProfileStyle>
-
-                        <div className="profile-avatar">
-                            <div className="profile-avatar-modify">
-                                <img src={this.state.avatar} alt="头像" />
-                                <div className="profile-avatar-modify-button">
-                                    <button onClick={this.handleClickUploadImage}>修改头像</button>
-                                    <input onChange={this.handleOnChangeUpload} type="file" className="image-upload" accept='image/*'/>
-                                </div>
+                <ProfileStyle>
+                    <div className="row justify-content-center">
+                        <div className="col-8 col-md-5 col-sm-6 col-lg-4 profile-avatar-modify">
+                            <img src={this.state.avatar} alt="头像" />
+                            <div className="profile-avatar-modify-button">
+                                <button onClick={this.handleClickUploadImage}>修改头像</button>
+                                <input onChange={this.handleOnChangeUpload} type="file" className="image-upload" accept='image/*'/>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="profile-modify-message">
-                            <div className='profile-modify-message-title'>修改信息</div>
-                            <hr />
-                            <div className="profile-modify-message-list">
-                                <div className="mb-3">
-                                    <label htmlFor="modify-username" className="form-label">昵称: </label>
-                                    <input defaultValue={this.state.username} type="text" className="form-control setinfo-username" id="modify-username"  />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="modify-background" className="form-label">背景图片地址: </label>
-                                    <input defaultValue={this.state.backgroundUrl} type="text" className="form-control setinfo-background" id="modify-background"  />
-                                </div>
+                    <div className="profile-modify-message">
+                        <div className='profile-modify-message-title'>修改信息</div>
+                        <hr />
+                        <div className="profile-modify-message-list row">
+                            <div className="col-12 pb-2">
+                                <label htmlFor="modify-username" className="form-label">昵称: </label>
+                                <input defaultValue={this.state.username} type="text" className="form-control setinfo-username" id="modify-username"  />
+                            </div>
+                            <div className="col-12 pb-2">
+                                <label htmlFor="modify-background" className="form-label">背景图片地址: </label>
+                                <input defaultValue={this.state.backgroundUrl} type="text" className="form-control setinfo-background" id="modify-background"  />
+                            </div>
 
-                                <div className="profile-modify-message-button">
-                                    <button onClick={this.handleClickSetInfo}>修改</button>
-                                </div>
+                            <div className="profile-modify-message-button">
+                                <button onClick={this.handleClickSetInfo}>修改</button>
                             </div>
                         </div>
-                    </ProfileStyle>
-
-                    {this.getNotice()}
-                </Card>
+                    </div>
+                </ProfileStyle>
+                {this.getNotice()}
             </React.Fragment>
         );
     }
@@ -110,7 +106,7 @@ class Profile extends Component {
                     data.append("file", image);
                     
                     $.ajax({
-                        url: "http://150.158.182.65/image/setAvatar/",
+                        url: `${requestUrl}/image/setAvatar/`,
                         type: "post",
                         headers: {
                             "Authorization": "Bearer " + TOKEN.access_token,
@@ -146,7 +142,7 @@ class Profile extends Component {
         let backgroundUrl = $('.setinfo-background').val();
 
         $.ajax({
-            url: "http://150.158.182.65/user/setinfo/",
+            url: `${requestUrl}/user/setinfo/`,
             type: "post",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
@@ -173,26 +169,28 @@ class Profile extends Component {
     }
 }
  
-const ProfileStyle = styled.div`
-    
+const ProfileStyle = styled.div.attrs(props => {
+    return {
+        className: "card",
+    }
+})`
+    & {
+        width: 80%;
+        margin: 0 auto;
+    }
+
     & .profile-title {
         font-size: 20px;
         font-weight: bold;
     }
 
-    & .profile-avatar {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
-
     & .profile-avatar-modify {
-
+        height: 100%;
     }
 
     & .profile-avatar-modify img {
-        max-width: 20rem;
-        max-height: 20rem;
+        max-width: 100%;
+        max-height: 100%;
         display: block;
         border: 1px solid #E8E8E8;
         border-radius: 5px;
@@ -221,15 +219,13 @@ const ProfileStyle = styled.div`
         background-color: #E6E6E6;
     }
 
+    & .profile-modify-message {
+        padding: 0 20px;
+    }
+
     & .profile-modify-message-title {
         font-size: 18px;
         font-weight: bold;
-    }
-
-    & .profile-modify-message-list {
-        display: flex;
-        flex-direction: column;
-        padding: 0px 10rem;
     }
 
     & .profile-modify-message-list label {
@@ -241,6 +237,7 @@ const ProfileStyle = styled.div`
         display: flex;
         flex-direction: row;
         justify-content: center;
+        padding: 20px;
     }
 
     & .profile-modify-message-button button {

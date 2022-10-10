@@ -17,41 +17,52 @@ class ArticlePreview extends Component {
     render() { 
         return (
             <React.Fragment>
-                <div onClick={this.handleClickNewBlank} className="shadow rounded" style={this.get_style()}>
-                    <PreviewStyle>
+                <PreviewStyle>
+                    <div onClick={this.handleClickNewBlank} className="shadow rounded preview">
                         <div className="article-preview-head">
-
                             <ModifyIcon style={{float: "right"}} handleClickModify={this.handleClickModify} />
 
                             <div className='preview-title'>
                                 {this.props.title}
                             </div>
 
-                            <div className="article-brief" style={{fontSize: "14px", marginBottom: "4px"}}>
-                                    <span style={{display: "block", fontWeight: 'lighter', whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}> {this.props.brief} </span>
+                            <div className="article-brief">
+                                <span className='article-brief-content'> {this.props.brief} </span>
                             </div>
                         </div>
 
                         <hr style={{margin: '2px'}} />
 
                         <div className="article-preview-body">
-                            <div className="article-message">
-                                <span className='title-item'>关键字 : </span>
+                            <div className="article-message row align-items-center">
+                                <div className="col-lg-3 col-sm-12">
+                                    <span className='title-item'>关键字 : </span>
                                     <span className='title-content-item'>{this.props.keywords}</span>
-
+                                </div>
+                                
+                                <div className='col-lg-4 col-sm-12'>
                                     <span className='title-item'>Author : </span>
-                                    <img className='avatar-item' src={this.state.avatarUrl} alt="头像" />
-                                    <span className='title-content-item'>{this.props.author} </span>
-
+                                    <div className='author-message'>
+                                        <img className='avatar-item' src={this.state.avatarUrl} alt="头像" />
+                                        <span className='title-content-item'>{this.props.author} </span>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div className='col-lg-3 col-sm-12'>
                                     <span className='title-item'>Time : </span>
                                     <span className='title-content-item'>{this.props.time}</span>
-
+                                </div>
+                                
+                                <div className='col-lg-2 col-sm-12'>
                                     <span className='title-item'>范围 : </span>
                                     <span className='title-content-item'>{this.props.visible === "all" ? "公开" : "未公开"}</span>
+                                </div>
+                                
                             </div>
                         </div>
-                    </PreviewStyle>
-                </div>
+                    </div>
+                </PreviewStyle>
             </React.Fragment>
         );
     }
@@ -66,40 +77,52 @@ class ArticlePreview extends Component {
 
         window.location.href = `/modify/${this.props.aid}`;
     }
-
-
-    get_style = () => {
-        const style = {
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-            height: "7rem",
-            backgroundColor: "rgba(251, 241, 211, 70%)",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginBottom: "1rem",
-            padding: "15px",
-        };
-
-        return style;
-    }
 }
  
 const PreviewStyle = styled.div`
+
+    & .preview {
+        background-color: rgba(251, 241, 211, 70%);
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        padding: 10px;
+        box-sizing: border-box;
+    }
     
     & .preview-title {
+        color: #212121;
         margin-bottom: 0px;
         margin-top: 3px;
         font-size: 20px;
     }
 
+    & .article-brief {
+        font-size: 14px;
+    }
+
+    & .article-brief-content {
+        color: #99A2AA;
+        display: block;
+        font-weight: lighter; 
+        white-space: nowrap; 
+        text-overflow: ellipsis; 
+        overflow: hidden;
+    }
+
+    & .author-message {
+        display: inline-block;
+    }
+
     & .article-message {
         font-size: 14px;
         margin-top: 8px;
-        margin-bottom: 2px;
     }
 
     & .avatar-item {
-        width: 28px;
-        height: 28px;
+        border: 1px solid #EFEFEF;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         object-fit: cover;
         margin-right: 4px;
@@ -113,7 +136,7 @@ const PreviewStyle = styled.div`
 
     & .title-content-item {
         font-weight: lighter;
-        margin-right: 2rem;
+        white-space: nowrap;
     }
 `
 

@@ -7,7 +7,7 @@ class EditorResizable extends Component {
         lastHeight: 0,
     } 
 
-    minHeight = 416;
+    minHeight = 360;
 
     render() { 
         return (

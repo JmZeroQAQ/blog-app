@@ -16,15 +16,17 @@ class HomeItem extends Component {
  
 
 const HomeItemStyled = styled.div`
-    width: 100%;
-    margin-top: 10px;
+    & {
+        width: 100%;
+        margin-top: 10px;
+    }
 
     & img {
+        display: block;
+        margin: 0 auto;
         max-width: 100%;
         border: 1px solid #E8E8E8;
         border-radius: 5px;
-        display: block;
-        margin: 0 auto;
     }
 `
 

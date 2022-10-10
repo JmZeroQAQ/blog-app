@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import $ from 'jquery';
 import { TOKEN } from '../token/identityToken';
 import { checkedSet } from './checkedArticleSet';
+import { requestUrl } from '../../API/requestUrl';
 
 class ArticleIndexItem extends Component {
     state = {  
@@ -19,11 +20,11 @@ class ArticleIndexItem extends Component {
                 <ItemStyle>
                     <td><input onChange={this.handleChangeChecked} checked={this.state.checked} className="form-check-input check-box" type="checkbox" value="" id="flexCheckDefault" /></td>
                     <td><span className='article-title'>{this.props.title}</span></td>
-                    <td><span className='article-user'>{this.props.user}</span></td>
+                    {/* <td><span className='article-user'>{this.props.user}</span></td> */}
                     <td>{this.props.time}</td>
                     <td className='article-backend-table-action'>
-                        <i onClick={this.handleClickDelete} title='删除' className="bi bi-x" style={{display: "inline-block", color: "red", fontSize: "32px"}}></i>
-                        <i onClick={this.handleClickModify} title='修改' className="bi bi-pencil-fill" style={{display: "inline-block", position: "relative", bottom: "7px", color: "blue", width: "32px", height: "32px", fontSize: "16px"}}></i>
+                        <i onClick={this.handleClickDelete} title='删除' className="bi bi-trash-fill index-item-delete"></i>
+                        <i onClick={this.handleClickModify} title='修改' className="bi bi-pencil-fill index-item-modify"></i>
                     </td>
                 </ItemStyle>
             </React.Fragment>
@@ -32,7 +33,7 @@ class ArticleIndexItem extends Component {
 
     handleClickDelete = (e) => {
         $.ajax({
-            url: "http://150.158.182.65/article/delete/",
+            url: `${requestUrl}/article/delete/`,
             type: "get",
             headers: {
                 'authorization': "Bearer " + TOKEN.access_token,
@@ -46,7 +47,7 @@ class ArticleIndexItem extends Component {
                     this.props.updateArticles();
                 }
                 else {
-                    console.log(resp.result);
+                    // 删除文章失败
                 }
             }
         })
@@ -107,13 +108,15 @@ class ArticleIndexItem extends Component {
 }
  
 const ItemStyle = styled.tr`
+
     & i {
         cursor: pointer;
     }
 
     & td {
-        line-height: 52px;
-        padding: 0px;
+        /* line-height: 1.5px; */
+        padding: 8px;
+        vertical-align: middle;
     }
 
     & i:hover{
@@ -124,11 +127,13 @@ const ItemStyle = styled.tr`
     & .article-title {
         color: #212121;
         cursor: pointer;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     & .article-title:hover {
         color: #00A1D9;
-        /* border-bottom: 1px solid #89BFCD; */
     }
 
     & .article-user {
@@ -138,15 +143,32 @@ const ItemStyle = styled.tr`
 
     & .article-user:hover {
         color: #00A1D9;
-        /* border-bottom: 1px solid #89BFCD; */
     }
 
     & .check-box {
         position: relative;
-        top: 16px;
-        left: 8px
     }
 
+    & .index-item-delete {
+        color: red;
+        font-size: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    & .index-item-delete:hover {
+        color: #913131;
+    }
+
+    & .index-item-modify {
+        cursor: pointer;
+        font-size: 18px;
+        color: #3498DB;
+    }
+
+    & .index-item-modify:hover {
+        color: #0056B3;
+    }
 `
 
 export default ArticleIndexItem;

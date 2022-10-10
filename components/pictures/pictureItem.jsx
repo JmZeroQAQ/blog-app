@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled, {keyframes} from 'styled-components';
 import $ from 'jquery';
 import { TOKEN } from '../token/identityToken';
+import { requestUrl } from '../../API/requestUrl';
 
 class PictureItem extends Component {
     state = {  
@@ -11,22 +12,24 @@ class PictureItem extends Component {
     render() { 
         return (
             <React.Fragment>
-                <PictureItemStyle onMouseEnter={() => this.setState({hoverSwitch: true})} onMouseLeave={() => this.setState({hoverSwitch: false})}>
-                    {this.getHoverItem()}
-
-                    <div className="images-head">
-                        <div className="images-head-display">
-                            <img onClick={e => this.onClickHandleImage(e)} src={this.props.imageUrl} alt="" />
+                <PictureItemStyle>
+                    <div className="images" onMouseEnter={() => this.setState({hoverSwitch: true})} onMouseLeave={() => this.setState({hoverSwitch: false})}>
+                        {this.getHoverItem()}
+                        <div className="images-head">
+                            <div className="images-head-display">
+                                <img onClick={e => this.onClickHandleImage(e)} src={this.props.imageUrl} alt="" />
+                            </div>
                         </div>
-                    </div>
-                    <div className="images-message">
-                        <span className='images-message-item'>{this.props.imageCreateTime}</span>
-                        <span className='images-message-item'>{this.props.imageSize}MB</span>
 
-                        <span onClick={this.handleClickCopy} title='复制' className="images-copy-icon">
-                            <i className="bi bi-clipboard2-fill"></i>
-                            <i className="bi bi-markdown-fill"></i>
-                        </span>
+                        <div className="images-message">
+                            <span className='images-message-item'>{this.props.imageCreateTime}</span>
+                            <span className='images-message-item'>{this.props.imageSize}MB</span>
+
+                            <span onClick={this.handleClickCopy} title='复制' className="images-copy-icon">
+                                <i className="bi bi-clipboard2-fill"></i>
+                                <i className="bi bi-markdown-fill"></i>
+                            </span>
+                        </div>
                     </div>
                 </PictureItemStyle>
             </React.Fragment>
@@ -51,9 +54,8 @@ class PictureItem extends Component {
     }
 
     handleClickDelete = (e) => {
-        console.log("delete Image");
         $.ajax({
-            url: "http://150.158.182.65/image/deleteImage/",
+            url: `${requestUrl}/image/deleteImage/`,
             type: "get",
             headers: {
                 'Authorization': "Bearer " + TOKEN.access_token,
@@ -64,7 +66,6 @@ class PictureItem extends Component {
             },
 
             success: (resp) => {
-                console.log(resp);
                 this.props.imageUpdate();
             }
         })
@@ -92,12 +93,19 @@ const showAnimation = keyframes`
     }
 `
 
-const PictureItemStyle = styled.div`
+const PictureItemStyle = styled.div.attrs(props => {
+    return {
+        className: "col-md-6 col-lg-4 col-xl-3",
+    }
+})`
     & {
-        width: 230px;
+        margin-top: 10px;
+        padding: 0 10px;
+    }
+
+    & .images {
         height: 200px;
-        padding: 12px 12px 4px;
-        margin: 12px;
+        padding: 0 5px;
         background-color: #FAFAFA;
         border-radius: 5px;
         border: 1px solid #E8E8E8;
@@ -106,7 +114,7 @@ const PictureItemStyle = styled.div`
         position: relative;
     }
 
-    &:hover {
+    & .images:hover {
         border: 1px solid #89D1F5;
         box-shadow: 1px 2px 12px #3CB2D6;
     }
@@ -148,9 +156,10 @@ const PictureItemStyle = styled.div`
     }
 
     & .images-hover-items {
-        width: 90%;
+        width: 95%;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         position: absolute;
         z-index: 5;
         animation: ${showAnimation} 800ms;

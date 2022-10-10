@@ -104,19 +104,18 @@ pre div::-webkit-scrollbar-thumb {
 
 .article-editor-body-button {
   width: 100%;
-  text-align: right;
   margin-top: 15px;
+  box-sizing: border-box;
 }
 
 .article-editor-btn-storage {
   color: white;
   font-weight: bold;
-  margin-right: 2rem;
-  width: 15%;
-  height: 3rem;
+  padding: 12px;
   background-color: #5CB85C;
   border: none;
   border-radius: 6px;
+  display: block;
 }
 
 .article-editor-btn-storage:hover {
@@ -126,11 +125,11 @@ pre div::-webkit-scrollbar-thumb {
 .article-editor-btn-submit {
   color: white;
   font-weight: bold;
-  width: 15%;
-  height: 3rem;
+  padding: 12px;
   background-color: #5CB85C;
   border: none;
   border-radius: 6px;
+  display: block;
 }
 
 .article-editor-btn-submit:hover {
@@ -160,7 +159,7 @@ pre div::-webkit-scrollbar-thumb {
 .search-bar {
   height: 2.6rem;
   line-height: calc(2.6rem - 4px);
-  width: 55%;
+  width: 60%;
   margin: 0 auto;
   border: 2px solid #F9F9F9;
   margin-bottom: 1rem;

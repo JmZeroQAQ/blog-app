@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Card from '../base_unit/card';
 import BaseEditor from '../base_unit/baseEditor';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad } from '../token/identityToken';
@@ -11,6 +10,8 @@ import EditorResizable from './editorResizable';
 import { useParams } from 'react-router-dom';
 import ArticleCheckbox from './../base_unit/articleCheckbox';
 import { User } from '../base_unit/User/userInfo';
+import { requestUrl } from '../../API/requestUrl';
+import styled from 'styled-components';
 
 class ArticleModify extends Component {
     constructor(props) {
@@ -20,7 +21,7 @@ class ArticleModify extends Component {
             notice: false,
             errorNotice: false,
             errorMessage: "",
-            editorHeight: 416,
+            editorHeight: 380,
             preview: false,
             load: false,
             isPublic: true,
@@ -30,7 +31,7 @@ class ArticleModify extends Component {
 
         OnTokenLoad(() => {
             $.ajax({
-                url: "http://150.158.182.65/article/get/",
+                url: `${requestUrl}/article/get/`,
                 type: "get",
                 data: {
                     articleId: this.props.params.article_id,
@@ -75,15 +76,15 @@ class ArticleModify extends Component {
     getContent() {
         if(this.state.load) {
             return (
-                <Card style={this.getCardStyle()}>
-                    <div onKeyDown={(e) => this.handleKeydownPreview(e)} style={{outline: "none"}} tabIndex='-1' className="article-editor">
+                <ArticleModifyStyle>
+                    <div onKeyDown={(e) => this.handleKeydownPreview(e)} tabIndex='-1' className="article-editor">
                         <div className="article-editor-head row">
-                            <div className="article-editor-head-title col-md-7">
-                                <input type="text" className="form-control articleEditor-title" placeholder='标题' maxLength={30} />
+                            <div className="article-editor-head-title col-md-7 col-sm-12 col-xs-12">
+                                <input type="text" className="form-control articleEditor-title" placeholder='标题' maxLength={20} />
                             </div>
 
-                            <div className="article-editor-head-keyword col-md-5">
-                                <input type="text" className="form-control articleEditor-keywords" placeholder='关键字, 逗号隔开' maxLength={30} />
+                            <div className="article-editor-head-keyword col-md-5 col-sm-12 col-xs-12 mt-2 mt-md-0">
+                                <input type="text" className="form-control articleEditor-keywords" placeholder='关键字, 逗号隔开' maxLength={12} />
                             </div>
                         </div>
 
@@ -118,8 +119,10 @@ class ArticleModify extends Component {
                             />
 
                             <div className="article-editor-body-button">
-                                <button onClick={this.handleClickStorage} className='article-editor-btn-storage'>保存</button>
-                                <button onClick={this.handleClickSubmit} className='article-editor-btn-submit'>修改</button>
+                                <div className='row justify-content-end px-2'>
+                                    <button onClick={this.handleClickStorage} className='me-md-3 col-md-2 col-sm-12 col-xs-12 article-editor-btn-storage'>保存</button>
+                                    <button onClick={this.handleClickSubmit} className='mt-sm-2 mt-2 mt-md-0 col-md-2 col-sm-12 col-xs-12 article-editor-btn-submit'>修改</button>
+                                </div>
                             </div>
 
                         </div>
@@ -129,7 +132,7 @@ class ArticleModify extends Component {
                     {this.getErrorNotice()}
 
                     {this.getPreview()}
-                </Card>
+                </ArticleModifyStyle>
             );
         }
     }
@@ -188,18 +191,6 @@ class ArticleModify extends Component {
         this.setState({textValue: res});
     }
 
-    getCardStyle = () => {
-        const style = {
-            margin: "0 auto",
-            minHeight: "35rem",
-            width: "70%",
-            backgroundColor: "rgba(255, 255, 255, 75%)",
-            boxShadow: "2px 1px 12px #DDDDDD",
-        };
-
-        return style;
-    }
-
     getEditorContainerStyle() {
         let style = {
             height: `${this.state.editorHeight.toString()}px`,
@@ -235,7 +226,7 @@ class ArticleModify extends Component {
             let visible = this.state.isPublic ? "all" : "self";
     
             $.ajax({
-                url: "http://150.158.182.65/article/modify/",
+                url: `${requestUrl}/article/modify/`,
                 type: "post",
                 headers: {
                     'Authorization': "Bearer " + TOKEN.access_token,
@@ -252,7 +243,6 @@ class ArticleModify extends Component {
     
                 success: (res) => {
                     if(res.result !== "success") {
-                        console.log(res);
                         if(this.state.errorNotice === false) {
                             this.setState({errorNotice: true, errorMessage: res.result});
                             setTimeout(() => {
@@ -314,3 +304,18 @@ export default props => (
         params={useParams()}
     />
 );
+
+const ArticleModifyStyle = styled.div.attrs((props) => {
+    return {
+        className: "card col-md-10 col-xs-12 col-sm-12 round shadow",
+    };
+})`
+    & {
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    & .article-editor {
+        outline: none;
+    }
+`

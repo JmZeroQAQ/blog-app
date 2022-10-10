@@ -2,6 +2,7 @@ import { TOKEN } from "./identityToken"
 import $ from 'jquery';
 import { store } from '../redux/store';
 import { ACTIONS } from "../redux/action";
+import { requestUrl } from '../../API/requestUrl';
 
 
 let refreshEventId = -1;
@@ -10,7 +11,7 @@ let ajaxInit = -1;
 
 const refreshToken = () => {
     $.ajax({
-        url: "http://150.158.182.65/token/refresh/",
+        url: `${requestUrl}/token/refresh/`,
         type: "post",
         data: {
             refresh: TOKEN.refresh_token,
@@ -38,7 +39,7 @@ const refreshToken = () => {
 const add_listening_events_refresh = () => {
 
     ajaxInit =  $.ajax({
-        url: "http://150.158.182.65/token/refresh/",
+        url: `${requestUrl}/token/refresh/`,
         type: "post",
         data: {
             refresh: TOKEN.refresh_token,
