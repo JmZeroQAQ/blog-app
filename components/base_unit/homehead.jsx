@@ -8,7 +8,7 @@ import { requestUrl } from '../../API/requestUrl';
 
 class HomeHead extends Component {
     state = {  
-        avatarUrl: `${requestUrl}/static/images/avatar.jpg`,
+        avatarUrl: `${requestUrl}/media/images/2022100416550886.png`, // 未登录时显示
         notice: false,
         noticeMessage: "",
         messageType: "",

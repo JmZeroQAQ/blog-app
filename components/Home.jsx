@@ -7,17 +7,21 @@ import { requestUrl } from '../API/requestUrl';
 
 class Home extends Component {
     state = {  
-        imageList: [],
+        articles: [],
     } 
 
     componentDidMount() {
         $.ajax({
-            url: `${requestUrl}/image/getHomeImageList/`,
+            url: `${requestUrl}/article/getHomeArticleList/`,
             type: "get",
             
             success: (resp) => {
                 if(resp.result === "success") {
-                    this.setState({imageList: resp.images});
+                    this.setState({
+                        articles: [
+                            ...resp.articles
+                        ],
+                    });
                 }
                 else {
                     window.location.href = '/404'; //跳转到404
@@ -34,19 +38,24 @@ class Home extends Component {
                         updateImages = {this.updateImages}
                     />
 
-                    <div className="home-body-images">
+                    <div className="home-body-items">
                         {
-                            this.state.imageList.map((image) => {
+                            this.state.articles.map((article) => {
                                 return (
                                     <HomeItem 
-                                        key={parseInt(image.imageId)}
-                                        imageUrl = {`${requestUrl}` + image.imageUrl}
+                                        key={article.aid}
+                                        fileClass={article.type}
+                                        fileTitle={article.title}
+                                        userAvatar={`${requestUrl}${article.avatarUrl}`}
+                                        username={article.username}
+                                        time={article.time}
+                                        content={article.content}
+                                        articleId={article.aid}
                                     />
                                 );
                             })
                         }
                     </div>
-
                 </HomeStyle>
             </React.Fragment>
         );
@@ -55,15 +64,19 @@ class Home extends Component {
     // 更新图片
     updateImages = () => {
         $.ajax({
-            url: `${requestUrl}/image/getHomeImageList/`,
+            url: `${requestUrl}/article/getHomeArticleList/`,
             type: "get",
             
             success: (resp) => {
                 if(resp.result === "success") {
-                    this.setState({imageList: resp.images});
+                    this.setState({
+                        articles: [
+                            ...resp.articles
+                        ],
+                    });
                 }
                 else {
-                    window.location.href = '/404';
+                    window.location.href = '/404'; //跳转到404
                 }
             }
         });
@@ -85,7 +98,7 @@ const HomeStyle = styled.div.attrs(props => {
         border: none;
     }
 
-    & .home-body-images {
+    & .home-body-items {
         width: 100%;
     }
 `
