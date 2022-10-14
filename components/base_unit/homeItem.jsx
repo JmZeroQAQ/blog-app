@@ -108,7 +108,8 @@ const HomeItemStyled = styled.div`
 
     & .user-name {
         font-size: 16px;
-        color: #333333;
+        /* color: #333333; */
+        color: #FB7299;
         font-weight: bold;
     }
 

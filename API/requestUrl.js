@@ -1,4 +1,4 @@
-const requestUrl = "http://150.158.182.65";
+const requestUrl = "https://ranunculus.top";
 
 export {
     requestUrl,

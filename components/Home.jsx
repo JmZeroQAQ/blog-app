@@ -4,6 +4,7 @@ import $ from "jquery";
 import HomeItem from './base_unit/homeItem';
 import HomeHead from './base_unit/homehead';
 import { requestUrl } from '../API/requestUrl';
+import ICPInformation from './ICPInformation';
 
 class Home extends Component {
     state = {  
@@ -56,6 +57,8 @@ class Home extends Component {
                             })
                         }
                     </div>
+
+                    <ICPInformation />
                 </HomeStyle>
             </React.Fragment>
         );
@@ -66,7 +69,7 @@ class Home extends Component {
         $.ajax({
             url: `${requestUrl}/article/getHomeArticleList/`,
             type: "get",
-            
+
             success: (resp) => {
                 if(resp.result === "success") {
                     this.setState({
@@ -100,5 +103,6 @@ const HomeStyle = styled.div.attrs(props => {
 
     & .home-body-items {
         width: 100%;
+        min-height: 80vh;
     }
 `
