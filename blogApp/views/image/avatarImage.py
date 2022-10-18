@@ -32,6 +32,11 @@ class AvatarImageView(APIView):
         imageUser = BlogUser.objects.filter(user = user)[0]
         image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False)
 
+        imageFileName = image.imageFile.name
+        imageFileName = imageFileName.split('/')[-1]
+        image.imageFileName = imageFileName
+        image.save()
+
         imageUser.avatarUrl = str(image.imageFile.url)
         imageUser.save()
 

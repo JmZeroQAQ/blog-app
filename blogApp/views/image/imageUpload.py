@@ -52,6 +52,12 @@ class ImageUploadView(APIView):
         imageUser.save()
 
         image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename)
+        
+        imageFileName = image.imageFile.name
+        imageFileName = imageFileName.split('/')[-1]
+
+        image.imageFileName = imageFileName
+        image.save()
 
         return Response({
             'result': "success",

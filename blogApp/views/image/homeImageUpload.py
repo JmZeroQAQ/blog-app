@@ -34,6 +34,11 @@ class HomeImageUploadView(APIView):
         imageUser = BlogUser.objects.filter(user = user)[0]
         image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False, imageType = "homeImage")
         
+        imageFileName = image.imageFile.name
+        imageFileName = imageFileName.split('/')[-1]
+        image.imageFileName = imageFileName
+        image.save()
+
         imageUrl = image.imageFile.url
         content = "![]" + "(https://ranunculus.top" + imageUrl + ")"
         keywords = "图片分享"

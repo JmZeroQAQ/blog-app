@@ -10,6 +10,7 @@ class ArticleTools(admin.ModelAdmin):
 
 class ImageTools(admin.ModelAdmin):
     list_display = ('imageName', 'imageUser', 'imageVisible')
+    search_fields = ('imageFileName', )
 
 # Register your models here.
 
