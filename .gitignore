@@ -1,0 +1,7 @@
+db.sqlite3
+UserStorage/
+**/__pycache__
+static/
+**/static/
+media/
+
