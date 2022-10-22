@@ -16,14 +16,25 @@ class AvatarImageView(APIView):
             return Response({
                 'result': "图片内容为空!",
                 })
+
         if imageFile.size > 10 * 1024 * 1024:
             return Resopnse({
                 'result': "文件太大了!",
                 })
 
         filename = imageFile.name
-        fileType = filename.split('.', 1)[1]
+        if filename != 'blob':
+            return Response({
+                'result': "请上传正确格式图片!",
+                })
+        imageFile.name = filename = 'avatar.png'
 
+        if filename.find('.') == -1:
+            return Response({
+                'result': "请上传正确格式图片!",
+                })
+        
+        fileType = filename.split('.', 1)[1]
         if fileType not in["jpg", "jpeg", "png", "gif"]:
             return Response({
                 'result': "图片类型不支持!",
