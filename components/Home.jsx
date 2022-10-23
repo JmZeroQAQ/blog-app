@@ -12,12 +12,25 @@ class Home extends Component {
     } 
 
     componentDidMount() {
+        // 先从本地获取文章，再从服务器获取文章
+        let storage_articles = localStorage.getItem("home_articles");
+        storage_articles = JSON.parse(storage_articles);
+
+        this.setState({
+            articles: [
+                ...storage_articles
+            ],
+        });
+
         $.ajax({
             url: `${requestUrl}/article/getHomeArticleList/`,
             type: "get",
             
             success: (resp) => {
                 if(resp.result === "success") {
+                    // 将获取到的文章缓存在本地一份
+                    localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+
                     this.setState({
                         articles: [
                             ...resp.articles
@@ -72,6 +85,9 @@ class Home extends Component {
 
             success: (resp) => {
                 if(resp.result === "success") {
+                    // 将获取到的文章缓存在本地一份
+                    localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+
                     this.setState({
                         articles: [
                             ...resp.articles

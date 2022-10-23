@@ -22,6 +22,18 @@ class Article extends Component {
         $(window).on('scroll.article', this.handleScroll);
         $('.navbar-article').addClass("active");
 
+        // 先使用本地的文章列表，然后再向服务器请求新的文章列表
+        let article_list = localStorage.getItem("article_list");
+        article_list = JSON.parse(article_list);
+        this.setState(
+            {
+                articles: [
+                    ...article_list,
+                ],
+                current_count: 0 + parseInt(article_list.length),
+            }
+        );
+
         OnTokenLoad(() => {
             $.ajax({
                 url: `${requestUrl}/article/getlist/`,
@@ -34,6 +46,9 @@ class Article extends Component {
                 },
     
                 success: (resp) => {
+                    // 将获取到的文章列表缓存在本地一份
+                    localStorage.setItem("article_list", JSON.stringify(resp.articles));
+
                     if(resp.result === "success") {
                         this.setState(
                             {

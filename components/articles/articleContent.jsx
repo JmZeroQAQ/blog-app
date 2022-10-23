@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { TOKEN, OnTokenLoad, OnTourist } from '../token/identityToken';
 import { useParams } from 'react-router-dom';
 import { requestUrl } from '../../API/requestUrl';
+import { User, OnUserInfoLoad } from '../base_unit/User/userInfo';
 
 class ArticleContent extends Component {
     state = {  
@@ -16,9 +17,16 @@ class ArticleContent extends Component {
         keywords: "",
         visible: "",
         load: false,
+
+        username: "", // 登录用户的昵称
     } 
     
     componentDidMount() {
+
+        // 获取登录用户信息
+        OnUserInfoLoad(() => {
+            this.setState({username: User.getUserName()});
+        });
 
         OnTokenLoad(() => {
             $.ajax({
@@ -127,9 +135,7 @@ class ArticleContent extends Component {
                                 <span>{this.state.visible === "all" ? "所有人可见" : "仅自己可见"}</span>
                             </div>
 
-                            <div className='article-change-icon'>
-                                <span onClick={this.handleClickModify} style={{cursor: "pointer"}} className="bi bi-pencil-fill"></span>
-                            </div>
+                            {this.getModify()}
 
 
                             <hr style={{marginTop: "6px", color: "#999999"}} />
@@ -143,6 +149,16 @@ class ArticleContent extends Component {
                         </div>
                     </div>
                 </ArticleContentStyle>
+            );
+        }
+    }
+
+    getModify() {
+        if(this.state.author === this.state.username) {
+            return (
+                <div className='article-change-icon'>
+                    <span onClick={this.handleClickModify} style={{cursor: "pointer"}} className="bi bi-pencil-fill"></span>
+                </div>
             );
         }
     }
