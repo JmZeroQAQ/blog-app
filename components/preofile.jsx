@@ -5,6 +5,7 @@ import { User, OnUserInfoLoad } from './base_unit/User/userInfo';
 import {TOKEN} from './token/identityToken';
 import NoticeToast from './base_unit/noticeToast';
 import { requestUrl } from '../API/requestUrl';
+import ImageCropper from './pictures/croper/imageCropper';
 
 class Profile extends Component {
     state = {  
@@ -14,6 +15,8 @@ class Profile extends Component {
         notice: false,
         noticeMessage: "",
         messageType: "",
+        cropperDisplay: false,
+        cropImageSrc: "",
     } 
 
     componentDidMount() {
@@ -54,10 +57,37 @@ class Profile extends Component {
                             </div>
                         </div>
                     </div>
+
+                    {this.getCropper()}
+                    
                 </ProfileStyle>
                 {this.getNotice()}
             </React.Fragment>
         );
+    }
+
+    setNoticeInfo = (result) => {
+        this.setState({notice: true, noticeMessage: result, messageType: "warning"}, () => {
+            setTimeout(() => {
+                this.setState({notice: false});
+            }, 3 * 1000);
+        });
+    }
+
+    setCropperDisplay = (flag) => {
+        this.setState({cropperDisplay: flag});
+    }
+
+    getCropper() {
+        if(this.state.cropperDisplay) {
+            return (
+                <ImageCropper
+                    src={this.state.cropImageSrc}
+                    setCropperDisplay={this.setCropperDisplay}
+                    setNoticeInfo={this.setNoticeInfo}
+                />
+            );
+        }
     }
 
     getNotice() {
@@ -94,7 +124,7 @@ class Profile extends Component {
     }
 
     handleOnChangeUpload = (e) => {
-        if(e.target.files.length === 1) { // 上传单个文件
+        if(e.target.files.length === 1) {
             let image = e.target.files[0];
             let image_name = image.name; // 图片名字
             let type = image_name.split('.');
@@ -102,37 +132,16 @@ class Profile extends Component {
             if(type === "png" || type === "gif" || type === "jpeg" || type === "jpg") {
                 let image_size = parseInt(image.size) / 1024 / 1024; // 单位：MB
                 if(image_size <= 10) {
-                    let data = new FormData();
-                    data.append("file", image);
-                    
-                    $.ajax({
-                        url: `${requestUrl}/image/setAvatar/`,
-                        type: "post",
-                        headers: {
-                            "Authorization": "Bearer " + TOKEN.access_token,
-                        },
-                        data: data,
-                        processData: false,
-                        contentType: false,
+                    let reader = new FileReader();
+                    reader.onload = (evt) => {
+                        let img = new Image();
+                        img.src = evt.target.result;
 
-                        success: (resp) => {
-                            if(resp.result === "success") {
-                                window.location.href = "/";
-                            }
-                            else {
-                                this.setState({notice: true, noticeMessage: resp.result, messageType: "warning"}, () => {
-                                    setTimeout(() => {
-                                        this.setState({notice: false});
-                                    }, 3 * 1000);
-                                });
-                            }
-                        }
-                    })
+                        this.setState({cropImageSrc: img.src, cropperDisplay: true}); // 图片加载完，打开裁剪板
+                    };
+
+                    reader.readAsDataURL(image);
                 }
-            }
-            else {
-                alert("上传的文件必须是图片格式");
-                return ;
             }
         }
     }

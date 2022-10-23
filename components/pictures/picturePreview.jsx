@@ -23,7 +23,7 @@ class PicturePreview extends Component {
                         onClick={e => this.handleClickBackground(e)}
                         onKeyDown = {e => e.key === 'Escape' ? this.handleClickBackground(e) : null}
                     >
-                        <img onClick={e => this.handleClickImage(e)} src={this.props.imageUrl} />
+                        <img onClick={e => this.handleClickImage(e)} src={this.props.imageUrl} alt="" />
                     </PicturePreviewStyle>
                 </PictureModal>
             </React.Fragment>

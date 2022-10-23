@@ -40,7 +40,7 @@ class PreviewModal extends Component {
     handleKeyDownPreview = (e) => {
         if(e.ctrlKey && e.key === 'q') {
             PREVIEW_MODAL.hideModal();
-            // 移除鱼篮框
+            // 移除预览框
             setTimeout(() => this.props.offPreview(), 0.2 * 1000);
         }
     }

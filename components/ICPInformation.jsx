@@ -8,7 +8,7 @@ function ICPInformation() {
             <hr />
             {/* <span className='copyright'>© 2022-2022 JmZeroQAQ 版权所有</span>
             <span>  |  </span> */}
-            <a href="https://beian.miit.gov.cn" rel='noreferrer'>赣ICP备2022009054号-1</a>
+            <a href="https://beian.miit.gov.cn" target="_bank" rel='noreferrer'>赣ICP备2022009054号-1</a>
         </ICPInformationStyle>
     );
 }

@@ -103,6 +103,8 @@ const HomeItemStyled = styled.div`
     & .user-image img {
         width: 48px;
         height: 48px;
+        border: 1px solid rgb(239, 239, 239);
+        object-fit: cover;
         border-radius: 50%;
     }
 

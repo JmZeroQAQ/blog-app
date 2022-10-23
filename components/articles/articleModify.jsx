@@ -28,6 +28,8 @@ class ArticleModify extends Component {
             storageButton: true,
             submitButton: true,
         }
+        // 编辑器的实例对象
+        this.refArticleEditor = React.createRef();
 
         OnTokenLoad(() => {
             $.ajax({
@@ -90,7 +92,7 @@ class ArticleModify extends Component {
 
                         <div className="article-editor-body">
                             <div style={this.getEditorContainerStyle()} className="artcile-editor-body-container">
-                                <div style={{height: "100%"}} className="article-editor-body-textEditor">
+                                <div onPaste={this.handlePaste} style={{height: "100%"}} className="article-editor-body-textEditor">
                                     <BaseEditor 
                                         newref={this.refArticleEditor}
                                         theme='solarized_light'
@@ -134,6 +136,55 @@ class ArticleModify extends Component {
                     {this.getPreview()}
                 </ArticleModifyStyle>
             );
+        }
+    }
+
+    // 实现图片粘贴
+    handlePaste = (e) => {
+        let image = e.clipboardData.files[0];
+        if(!image) {
+            return ;
+        }
+
+        let imageName = image.name;
+        let imageType = imageName.split('.');
+        let imageSize = image.size;
+        imageType = imageType[1];
+
+        if(imageType !== "png" && imageType !== "jpg" && imageType !== 'gif' && imageType !== "jpeg") {
+            return ;
+        }
+
+        if (imageSize <= 1 * 1024 * 1024) { // Unit: MB
+            let data = new FormData();
+            data.append("file", image);
+
+            $.ajax({
+                url: `${requestUrl}/image/articleImageUpload/`,
+                type: "post",
+                headers:{
+                    'Authorization': "Bearer " + TOKEN.access_token,
+                },
+                data: data,
+                processData: false,
+                contentType: false,
+
+                success: (resp) => {
+                    if(resp.result === "success") {
+                        let imageUrl = `${requestUrl}` + resp.imageUrl;
+                        imageUrl = `![](${imageUrl})` ;
+                        let editor = this.refArticleEditor.current.editor;
+                        editor.insert(imageUrl);
+                    }
+                    else {
+                        this.setState({errorNotice: true, errorMessage: "粘贴图片失败!"}, () => {
+                            setTimeout(() => {
+                                this.setState({errorNotice: false})
+                            }, 3 * 1000)
+                        });
+                    }
+                }
+            });
         }
     }
 
