@@ -19,18 +19,21 @@ class SetUserInfoView(APIView):
                 'result': "非法昵称或背景!",
                 })
 
-        if User.objects.filter(username = username).exists():
-            return Response({
-                'result': "该用户名已经被使用",
-                })
-
         blogUser = BlogUser.objects.filter(user = user)[0]
+        user = blogUser.user
+
+        if username != user.username:
+            if not User.objects.filter(username = username).exists():
+                user.username = username
+                user.save()
+            else:
+                return Response({
+                    'result': "该用户名已经被使用",
+                    })
+
         blogUser.backgroundUrl = backgroundUrl
         blogUser.save()
 
-        user = blogUser.user
-        user.username = username
-        user.save()
 
         return Response({
             'result': "success",
