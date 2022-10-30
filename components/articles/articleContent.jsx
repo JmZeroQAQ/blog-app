@@ -121,6 +121,9 @@ class ArticleContent extends Component {
 
     getContent() {
         if(this.state.load) {
+            // 设置文章列表标题
+            document.title = this.state.title;
+
             return (
                 <ArticleContentStyle>
                     <div className="col-12 col-md-9 article-content">
@@ -177,6 +180,7 @@ const ArticleContentStyle = styled.div.attrs(props => {
         className: "row",
     }
 })`
+
 & .article-content {
         margin: 0 auto;
         min-height: 35rem;
@@ -185,7 +189,6 @@ const ArticleContentStyle = styled.div.attrs(props => {
         border: 1px solid #DDDDDD;
         border-radius: 10px;
         box-shadow: 2px 1px 12px #DDDDDD;
-        padding: 30px;
-    }
-
+        padding: 10px 30px 30px 30px;
+}
 `

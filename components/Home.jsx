@@ -12,15 +12,20 @@ class Home extends Component {
     } 
 
     componentDidMount() {
+        // 设置首页标题
+        document.title="首页";
         // 先从本地获取文章，再从服务器获取文章
         let storage_articles = localStorage.getItem("home_articles");
-        storage_articles = JSON.parse(storage_articles);
+        if(storage_articles && typeof(storage_articles) !== 'undefined') {
+            storage_articles = JSON.parse(storage_articles);
 
-        this.setState({
-            articles: [
-                ...storage_articles
-            ],
-        });
+            this.setState({
+                articles: [
+                    ...storage_articles
+                ],
+            });
+        }
+        
 
         $.ajax({
             url: `${requestUrl}/article/getHomeArticleList/`,
@@ -29,7 +34,9 @@ class Home extends Component {
             success: (resp) => {
                 if(resp.result === "success") {
                     // 将获取到的文章缓存在本地一份
-                    localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+                    if(resp.articles) {
+                        localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+                    }
 
                     this.setState({
                         articles: [
@@ -86,7 +93,9 @@ class Home extends Component {
             success: (resp) => {
                 if(resp.result === "success") {
                     // 将获取到的文章缓存在本地一份
-                    localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+                    if(resp.articles) {
+                        localStorage.setItem("home_articles", JSON.stringify(resp.articles));
+                    }
 
                     this.setState({
                         articles: [
@@ -106,13 +115,13 @@ export default Home;
 
 const HomeStyle = styled.div.attrs(props => {
     return {
-        className: "card",
+        className: "card col-md-9",
     }
 })`
     & {
         margin: 0 auto;
         min-height: 35rem;
-        width: 75%;
+        /* width: 75%; */
         background-color: rgba(255, 255, 255, 10%);
         border: none;
     }

@@ -85,10 +85,12 @@ class NavBar extends Component {
 
 const NavBarDivStyle = styled.div.attrs(props => {
     return {
-        className: "container",
+        className: "container-md col-md-9",
     };
 })`
-    width: 75%;
+    & {
+        /* width: 75%; */
+    }
 
     & .navbar-home > img {
         width: 84px;

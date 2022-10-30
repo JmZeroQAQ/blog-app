@@ -43,7 +43,7 @@ class Login extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button onClick={this.handleButtonClickLogin} style={{width: "100%"}} type="button" className="btn btn-primary">登录</button>
-                                <div onClick={this.handleClickModalLogin} className={'login-modal-footer-register'} style={{cursor: 'pointer'}}>注册</div>
+                                <div onClick={this.handleClickModalLogin} className="d-none login-modal-footer-register" style={{cursor: 'pointer'}}>注册</div>
                             </div>
                         </div>
 

@@ -27,9 +27,22 @@ class ArticleModify extends Component {
             isPublic: true,
             storageButton: true,
             submitButton: true,
+            isUnloadNotice: false, // 修改内容后退出时的提醒,避免误按
         }
         // 编辑器的实例对象
         this.refArticleEditor = React.createRef();
+    }
+
+    componentDidMount() {
+        // 设置文章列表标题
+        document.title="修改文章";
+
+        // 设置退出提醒
+        window.onbeforeunload = (e) => {
+            if(this.state.isUnloadNotice) {
+                return "编辑器数据未保存,是否退出?";
+            }
+        }
 
         OnTokenLoad(() => {
             $.ajax({
@@ -58,8 +71,11 @@ class ArticleModify extends Component {
                     }
                 }
             });
-        })
-        
+        });
+    }
+
+    componentWillUnmount() {
+        window.onbeforeunload = null; // 移除事件的监听
     }
 
     render() { 
@@ -239,6 +255,11 @@ class ArticleModify extends Component {
     }
 
     onEditorChange = (res) => {
+        if(this.state.isUnloadNotice === false) {
+            this.setState({textValue: res, isUnloadNotice: true});
+            return ;
+        }
+
         this.setState({textValue: res});
     }
 
@@ -268,7 +289,7 @@ class ArticleModify extends Component {
     handleClickSubmit = () => {
         if(this.state.submitButton) {
             $('.article-editor-btn-submit').css("cursor", "not-allowed");
-            this.setState({submitButton: false});
+            this.setState({submitButton: false, isUnloadNotice: false});
 
             let title = $('.articleEditor-title').val();
             let keywords = $('.articleEditor-keywords').val();
@@ -316,7 +337,7 @@ class ArticleModify extends Component {
     handleClickStorage = () => {
         if(this.state.storageButton) {
             $('.article-editor-btn-storage').css("cursor", "not-allowed");
-            this.setState({storageButton: false, notice: true},
+            this.setState({storageButton: false, notice: true, isUnloadNotice: false},
                 () => {
                     setTimeout(() => {
                         this.setState({storageButton: true, notice: false})

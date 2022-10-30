@@ -20,6 +20,9 @@ class Profile extends Component {
     } 
 
     componentDidMount() {
+        // 设置文章列表标题
+        document.title = "个人信息";
+
         OnUserInfoLoad(() => {
             this.setState({username: User.getUserName(), avatar: User.getUserAvatar(), backgroundUrl: User.getBackgroundUrl()});
         })

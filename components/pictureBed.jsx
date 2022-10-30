@@ -22,6 +22,9 @@ class PictureBed extends Component {
     } 
 
     componentDidMount() {
+        // 设置文章列表标题
+        document.title="图床";
+
         $(window).on('scroll.image', this.handleScroll);
         $('.navbar-picturebed').addClass("active");
 
@@ -46,11 +49,13 @@ class PictureBed extends Component {
                         });
                     }
                     else {
-                        this.setState({errorNotice: true, errorMessage: resp.result}, () => {
-                            setTimeout(() => {
-                                this.setState({errorNotice: false});
-                            }, 3 * 1000);
-                        });
+                        if(resp.result !== "已经到底了!") {
+                            this.setState({errorNotice: true, errorMessage: resp.result}, () => {
+                                setTimeout(() => {
+                                    this.setState({errorNotice: false});
+                                }, 3 * 1000);
+                            });
+                        }
                     }
                 },
             });

@@ -25,6 +25,9 @@ class ArticleIndex extends Component {
     } 
 
     componentDidMount() {
+        // 设置文章列表标题
+        document.title = "文章管理";
+
         checkedSet.Init();
         $(window).on('scroll.index', this.handleScroll);
 
