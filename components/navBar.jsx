@@ -14,7 +14,7 @@ class NavBar extends Component {
             <React.Fragment>
                 <nav className="home-navbar navbar navbar-expand-lg  navbar-dark bg-dark" style={{fontSize: "18px", zIndex:12, position: "fixed", width: "100vw", height: "auto", top: "0"}}>
                     <NavBarDivStyle>
-                        <Link className=" navbar-home navbar-brand active" to="/">
+                        <Link className="navbar-home navbar-brand active" to="/">
                             <img src={require('../images/home.png')} alt="home" />
                         </Link>
 

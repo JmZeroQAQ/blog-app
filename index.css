@@ -12,6 +12,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* @font-face {
+  font-family: "satisfy";
+  src: url(./fonts/Satisfy-Regular.ttf);
+} */
+
 /* markdown样式更改 */
 .markdown-body pre {
   padding: 0px !important;

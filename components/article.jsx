@@ -63,7 +63,7 @@ class Article extends Component {
                                 articles: [
                                     ...resp.articles,
                                 ],
-                                current_count: this.state.current_count + parseInt(resp.article_size),
+                                current_count: 0 + parseInt(resp.article_size),
                             }
                         );
                     }
