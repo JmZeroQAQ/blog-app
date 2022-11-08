@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { User, OnUserInfoLoad } from './base_unit/User/userInfo';
+import { OnTourist } from './token/identityToken';
 
 class BackGround extends Component {
     state = {  
-        backgroundUrl: "https://ranunculus.top/media/images/2022110817354358.png",
+        backgroundUrl: "",
     } 
 
     componentDidMount() {
+
+        OnTourist(() => {
+            this.setState({backgroundUrl: "https://ranunculus.top/media/images/2022110817354358.png"});
+        });
+
         OnUserInfoLoad(() => {
-            this.setState({backgroundUrl: User.getBackgroundUrl()})
+            this.setState({backgroundUrl: User.getBackgroundUrl()});
         });
     }
 

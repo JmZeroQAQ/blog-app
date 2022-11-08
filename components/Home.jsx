@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import $ from "jquery";
+import { connect } from 'react-redux';
 import HomeItem from './base_unit/homeItem';
 import HomeHead from './base_unit/homehead';
 import { requestUrl } from '../API/requestUrl';
@@ -25,7 +26,6 @@ class Home extends Component {
                 ],
             });
         }
-        
 
         $.ajax({
             url: `${requestUrl}/article/getHomeArticleList/`,
@@ -55,9 +55,7 @@ class Home extends Component {
         return (
             <React.Fragment>
                 <HomeStyle>
-                    <HomeHead 
-                        updateImages = {this.updateImages}
-                    />
+                    {this.getHomeHead()}
 
                     <div className="home-body-items">
                         {
@@ -82,6 +80,16 @@ class Home extends Component {
                 </HomeStyle>
             </React.Fragment>
         );
+    }
+
+    getHomeHead() {
+        if(this.props.userStat === 1) {
+            return (
+                <HomeHead 
+                    updateImages = {this.updateImages}
+                />
+            );
+        }
     }
 
     // 更新图片
@@ -111,11 +119,17 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+        userStat: state.userStat,
+    }
+}
+
+export default connect(mapStateToProps)(Home);
 
 const HomeStyle = styled.div.attrs(props => {
     return {
-        className: "card col-md-9",
+        className: "card col-md-7",
     }
 })`
     & {
