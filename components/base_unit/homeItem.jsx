@@ -65,8 +65,8 @@ const HomeItemStyled = styled.div`
         width: 100%;
         max-height: auto;
         margin-top: 10px;
-        border: 1px solid #EFEFEF;
-        box-shadow: 1px 3px 6px #EFEFEF;
+        /* border: 0px 1px 1px 1px solid #EFEFEF; */
+        box-shadow: 1px 3px 5px #EFEFEF;
         border-radius: 5px;
         margin-bottom: 20px;
     }

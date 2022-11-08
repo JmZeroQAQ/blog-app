@@ -3,7 +3,7 @@ import { User, OnUserInfoLoad } from './base_unit/User/userInfo';
 
 class BackGround extends Component {
     state = {  
-        backgroundUrl: "",
+        backgroundUrl: "https://ranunculus.top/media/images/2022110817354358.png",
     } 
 
     componentDidMount() {

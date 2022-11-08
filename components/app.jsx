@@ -47,7 +47,7 @@ class App extends Component {
 
     get_container_style = () => {
         const style = {
-            marginTop: "calc(3.8rem + 15px)",
+            marginTop: "calc(58px + 20px)",
             minHeight: "42rem",
         }
 

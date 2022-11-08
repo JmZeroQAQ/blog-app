@@ -21,10 +21,6 @@ class NavBar extends Component {
                         
                         <div className="cos-collapse collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li className="nav-item navbar-item">
-                                    <Link className="nav-link navbar-article" to="/article">文章</Link>
-                                </li>
-
                                 {this.getLoginNavbar()}
                             </ul>
 
@@ -68,11 +64,15 @@ class NavBar extends Component {
             return (
                 <React.Fragment>
                     <li className="nav-item navbar-item">
-                    <Link className="nav-link navbar-create" to="/textEditor">新建文章</Link>
+                        <Link className="nav-link navbar-article" to="/article">文章</Link>
                     </li>
 
                     <li className="nav-item navbar-item">
-                    <Link className="nav-link navbar-picturebed" to="/picturebed">图床</Link>
+                        <Link className="nav-link navbar-create" to="/textEditor">新建文章</Link>
+                    </li>
+
+                    <li className="nav-item navbar-item">
+                        <Link className="nav-link navbar-picturebed" to="/picturebed">图床</Link>
                     </li>
                 </React.Fragment>
             );

@@ -122,7 +122,7 @@ const HomeStyle = styled.div.attrs(props => {
         margin: 0 auto;
         min-height: 35rem;
         /* width: 75%; */
-        background-color: rgba(255, 255, 255, 10%);
+        background-color: rgba(255, 255, 255, 0%);
         border: none;
     }
 
