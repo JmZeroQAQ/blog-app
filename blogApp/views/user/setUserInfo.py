@@ -13,6 +13,11 @@ class SetUserInfoView(APIView):
 
         username = data.get('username', "").strip()
         backgroundUrl = data.get('backgroundUrl', "").strip()
+        
+        if len(username) <= 3:
+            return Response({
+                'result': "非法昵称或者背景!",
+                })
 
         if len(username) > 10 or len(backgroundUrl) > 256:
             return Response({
