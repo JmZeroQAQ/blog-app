@@ -10,7 +10,7 @@ class BackGround extends Component {
     componentDidMount() {
 
         OnTourist(() => {
-            this.setState({backgroundUrl: "https://ranunculus.top/media/images/2022110817354358.png"});
+            this.setState({backgroundUrl: "https://ranunculus.top/media/images/2022110909350878.png"});
         });
 
         OnUserInfoLoad(() => {
