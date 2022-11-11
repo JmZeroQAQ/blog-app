@@ -17,15 +17,22 @@ class Image(models.Model):
     imageName = models.CharField(max_length = 100, default = "", blank = True, null = True)
     imageUser = models.ForeignKey('BlogUser', on_delete = models.CASCADE)
     imageFile = models.ImageField(verbose_name = "图片地址", upload_to = imagePath)
+    # 图片唯一ID
     imageId = models.BigAutoField(primary_key = True)
+    # 图片创建时间
     imageCreateTime = models.DateTimeField(auto_now_add = True, blank = True, null = True)
+    # 文件在图床是否显示
     imageVisible = models.BooleanField(default = True)
+    # 文件类别, 默认是normal, 首页上传的图片是homeImage
     imageType = models.CharField(max_length = 20, default = "normal")
+    # 图片储存在本地的名字
     imageFileName = models.CharField(verbose_name = "文件名字", max_length = 128, default = "")
 
     def __str__(self):
         return str(self.imageName)
 
+# 对删除信号添加对应的处理函数
+# 在图片实例被删除的时候，将本地的图片也删除
 @receiver(post_delete, sender = Image)
 def delete_upload_images(sender, instance, **kwargs):
     imageDir = os.path.join(MEDIA_ROOT, instance.imageFile.path)
