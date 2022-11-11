@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from blogApp.models.user.user import BlogUser
 from blogApp.models.image.image import Image
 
-response_image_count = 8
+response_image_count = 16
 
 class GetImageListView(APIView):
     permission_classes = ([IsAuthenticated])
