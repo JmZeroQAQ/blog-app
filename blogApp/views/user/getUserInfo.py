@@ -17,10 +17,22 @@ class GetUserInfoView(APIView):
             return Response({
                 'result': "获取用户信息失败",
             })
+        
+        # 用户名字
+        username = blogUser.user.username
+        # 用户头像地址
+        avatarUrl = blogUser.avatarUrl
+        # 用户头像缩略图
+        avatarThumbnail = blogUser.avatarThumbnail
+        # 用户背景地址
+        backgroundUrl = blogUser.backgroundUrl
+        if avatarThumbnail == None:
+            avatarThumbnail = avatarUrl
 
         return Response({
             'result': "success",
-            'username': blogUser.user.username,
-            'avatarUrl': blogUser.avatarUrl,
-            'backgroundUrl': blogUser.backgroundUrl,
+            'username': username,
+            'avatarUrl': avatarUrl,
+            'avatarThumbnail': avatarThumbnail,
+            'backgroundUrl': backgroundUrl,
         })

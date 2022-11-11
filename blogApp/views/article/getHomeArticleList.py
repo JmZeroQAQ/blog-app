@@ -13,6 +13,10 @@ class GetHomeArticleListView(APIView):
             time = article.articleCreateTime
             time = timezone.localtime(time)
             time = time.strftime("%Y-%m-%d %H:%M")
+            # 用户缩略图
+            avatarThumbnail = article.articleUser.avatarThumbnail
+            if avatarThumbnail == None:
+                avatarThumbnail = article.articleUser.avatarUrl
             
             content = ""
             try:
@@ -29,7 +33,7 @@ class GetHomeArticleListView(APIView):
             
             resp.append({
                 'username': article.articleUser.user.username,
-                'avatarUrl': article.articleUser.avatarUrl,
+                'avatarUrl': avatarThumbnail,
                 'title': article.articleTitle,
                 'content': content,
                 'time': time,

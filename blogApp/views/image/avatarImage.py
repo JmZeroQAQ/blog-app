@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from blogApp.models.user.user import BlogUser
 from blogApp.models.image.image import Image
+from blogApp.views.image_utils.resizeImage import resizeImage
 
 class AvatarImageView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -39,10 +40,13 @@ class AvatarImageView(APIView):
             return Response({
                 'result': "图片类型不支持!",
                 })
+        
+        # 获取压缩后的图片
+        thumbnail = resizeImage(file = imageFile, max_height = 65)
 
         imageUser = BlogUser.objects.filter(user = user)[0]
         # 上传的是头像，类别是avatar
-        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False, imageType = "avatar")
+        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False, imageType = "avatar", imageThumbnail = thumbnail)
 
         imageFileName = image.imageFile.name
         imageFileName = imageFileName.split('/')[-1]
@@ -50,6 +54,7 @@ class AvatarImageView(APIView):
         image.save()
 
         imageUser.avatarUrl = str(image.imageFile.url)
+        imageUser.avatarThumbnail = str(image.imageThumbnail.url)
         imageUser.save()
 
         return Response({
