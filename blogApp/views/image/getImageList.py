@@ -29,6 +29,7 @@ class GetImageListView(APIView):
         for image in images:
             imageId = image.imageId
             imageUrl = str(image.imageFile.url)
+            thumbnailUrl = str(image.imageThumbnail.url)
             imageSize = round(image.imageFile.size / 1024 / 1024, 2)
             createTime = image.imageCreateTime
             createTime = timezone.localtime(createTime)
@@ -37,6 +38,7 @@ class GetImageListView(APIView):
             resp.append({
                 'imageId': imageId,
                 'imageUrl': imageUrl,
+                'thumbnailUrl': thumbnailUrl,
                 'imageSize': imageSize,
                 'imageCreateTime': createTime,
             })

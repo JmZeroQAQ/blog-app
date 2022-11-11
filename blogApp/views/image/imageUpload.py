@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from blogApp.models.image.image import Image
 from blogApp.models.user.user import BlogUser
+from blogApp.views.image_utils.resizeImage import resizeImage
 
 class ImageUploadView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -46,12 +47,15 @@ class ImageUploadView(APIView):
             return Response({
                 'result': "用户内存不足!",
             })
-            
+        
+        # 维护用户所使用的内存空间
         imageCurrentSize += fileSize
         imageUser.imageCurrentSize = round(imageCurrentSize, 3)
         imageUser.save()
-
-        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename)
+        # 获取缩略图
+        thumbnail = self.createThumbnail(imageFile)
+        # 生成模型实例
+        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageThumbnail = thumbnail)
         
         imageFileName = image.imageFile.name
         imageFileName = imageFileName.split('/')[-1]
@@ -62,3 +66,8 @@ class ImageUploadView(APIView):
         return Response({
             'result': "success",
         })
+
+
+    def createThumbnail(self, file):
+        output = resizeImage(file = file, max_height = 200)
+        return output

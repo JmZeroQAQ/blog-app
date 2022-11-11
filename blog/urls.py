@@ -19,11 +19,11 @@ from django.views.static import serve
 from .settings import MEDIA_ROOT
 
 urlpatterns = [
-    path('', include('blogApp.urls.index')),
     path('admin/', admin.site.urls),
+    path('', include('blogApp.urls.index')),
     # re_path(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT})
     # path('media/', serve, {"document_root": MEDIA_ROOT})
 ]
 
 # 暂时不采取这种方法了
-# handler404 = "blogApp.views.page_not_found.page_not_found"
+handler404 = "blogApp.views.page_not_found.page_not_found"

@@ -12,6 +12,14 @@ def imagePath(instance, filename):
     filename = time.strftime('%Y%m%d%H%M%S')
     filename += '%d' % random.randint(0, 100)
     return 'images/' + filename + "." + filetype
+
+# 缩略图命名,及存储地址
+def thumbnailPath(instance, filename):
+    filetype = filename.split('.', 1)[1]
+    filename = time.strftime('%Y%m%d%H%M%S')
+    filename += '%d' % random.randint(0, 100)
+    return 'images/thumbnail/' + filename + "." + filetype
+
  
 class Image(models.Model):
     # 图片名字
@@ -20,6 +28,8 @@ class Image(models.Model):
     imageUser = models.ForeignKey('BlogUser', on_delete = models.CASCADE)
     # 被装饰的图片源文件
     imageFile = models.ImageField(verbose_name = "图片地址", upload_to = imagePath)
+    # 上传图片的缩略图,只有图床里面的图片才有缩略图
+    imageThumbnail = models.ImageField(verbose_name = "缩略图", upload_to = thumbnailPath, blank = True, null = True)
     # 图片唯一ID
     imageId = models.BigAutoField(primary_key = True)
     # 图片创建时间
@@ -38,10 +48,26 @@ class Image(models.Model):
 # 在图片实例被删除的时候，将本地的图片也删除
 @receiver(post_delete, sender = Image)
 def delete_upload_images(sender, instance, **kwargs):
+    # 源图片信息
     imageDir = os.path.join(MEDIA_ROOT, instance.imageFile.path)
     imageVisible = instance.imageVisible
     imageSize = round(instance.imageFile.size / 1024 / 1024, 3) # Unit: MB
     imageUser = instance.imageUser
+    
+    # 缩略图信息
+    thumbnail = instance.imageThumbnail
+    
+    # 判断是否有缩略图
+    if thumbnail != None:
+        # 缩略图路径
+        thumbnailDir = os.path.join(MEDIA_ROOT, thumbnail.path)
+        if os.path.exists(thumbnailDir):
+            try:
+                os.remove(thumbnailDir)
+            except Exception:
+                print(Exception)
+                print("Image model delete thumbnail failled!")
+
 
     if os.path.exists(imageDir):
         try:

@@ -7,5 +7,5 @@ urlpatterns = [
     path('user/', include('blogApp.urls.user.index')),
     path('article/', include('blogApp.urls.article.index')),
     path('image/', include("blogApp.urls.image.index")),
-    re_path(r".*", index, name = "index"),
+    # re_path(r".*", index, name = "index"),
 ]
