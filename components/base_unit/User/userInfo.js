@@ -1,6 +1,7 @@
 const UserInfo = {
     username: "",
     userAvatar: "",
+    userThumbnail: "",
     background: "",
 }
 
@@ -16,6 +17,10 @@ const User = {
         UserInfo.userAvatar = userAvatar;
     },
 
+    setUserThumbnail: (userThumbnail) => {
+        UserInfo.userThumbnail = userThumbnail;
+    },
+
     setBackgroundUrl: (backgroundUrl) => {
         UserInfo.background = backgroundUrl;
         // 暂时放在这里吧
@@ -28,6 +33,10 @@ const User = {
 
     getUserAvatar: () => {
         return UserInfo.userAvatar;
+    },
+
+    getUserThumbnail: () => {
+        return UserInfo.userThumbnail;
     },
 
     getBackgroundUrl: () => {

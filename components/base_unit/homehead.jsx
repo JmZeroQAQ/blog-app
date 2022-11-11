@@ -17,7 +17,7 @@ class HomeHead extends Component {
     componentDidMount() {
         OnUserInfoLoad(() => {
             this.setState({
-                avatarUrl: User.getUserAvatar(),
+                avatarUrl: User.getUserThumbnail(),
             });
         });
     }

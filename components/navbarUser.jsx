@@ -30,10 +30,15 @@ class NavBarUser extends Component {
                     if(avatarUrl.includes("media")) avatarUrl = `${requestUrl}` + avatarUrl;
                     User.setUserAvatar(avatarUrl);
 
+                    let avatarThumbnail = resp.avatarThumbnail;
+                    if(avatarThumbnail.includes("media")) avatarThumbnail = `${requestUrl}` + avatarThumbnail;
+                    User.setUserThumbnail(avatarThumbnail);
+
                     let backgroundUrl = resp.backgroundUrl;
                     User.setBackgroundUrl(backgroundUrl);
-
-                    this.setState({username: resp.username, avatarUrl: avatarUrl});
+                    
+                    // 注意，设置的是缩略图
+                    this.setState({username: resp.username, avatarUrl: avatarThumbnail});
                 }
                 else {
                     window.location.href = '/404';

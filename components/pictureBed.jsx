@@ -124,6 +124,7 @@ class PictureBed extends Component {
                                                 switchPreview={this.switchPreview}
                                                 imageUpdate={this.handleClickUpdate}
                                                 imageId={image.imageId}
+                                                thumbnailUrl={`${requestUrl}` + image.thumbnailUrl}
                                                 imageUrl={`${requestUrl}` + image.imageUrl}
                                                 imageSize={image.imageSize}
                                                 imageCreateTime={image.imageCreateTime}

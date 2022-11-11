@@ -65,6 +65,7 @@ class Home extends Component {
                                         key={article.aid}
                                         fileClass={article.type}
                                         fileTitle={article.title}
+                                        // 注意，获取的是用户的缩略图
                                         userAvatar={`${requestUrl}${article.avatarUrl}`}
                                         username={article.username}
                                         time={article.time}

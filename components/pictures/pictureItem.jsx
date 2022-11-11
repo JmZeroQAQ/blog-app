@@ -17,7 +17,7 @@ class PictureItem extends Component {
                         {this.getHoverItem()}
                         <div className="images-head">
                             <div className="images-head-display">
-                                <img onClick={e => this.onClickHandleImage(e)} src={this.props.imageUrl} alt="" />
+                                <img onClick={e => this.onClickHandleImage(e)} src={this.props.thumbnailUrl} alt="" />
                             </div>
                         </div>
 

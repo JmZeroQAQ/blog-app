@@ -10,7 +10,7 @@ class ArticlePreview extends Component {
 
     componentDidMount() {
         OnUserInfoLoad(() => {
-            this.setState({avatarUrl: User.getUserAvatar()});
+            this.setState({avatarUrl: User.getUserThumbnail()});
         });
     }
 
