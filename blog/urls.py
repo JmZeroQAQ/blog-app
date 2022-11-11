@@ -25,4 +25,5 @@ urlpatterns = [
     # path('media/', serve, {"document_root": MEDIA_ROOT})
 ]
 
-handler404 = "blogApp.views.page_not_found.page_not_found"
+# 暂时不采取这种方法了
+# handler404 = "blogApp.views.page_not_found.page_not_found"
