@@ -13,7 +13,7 @@ class GetUserImageInfoView(APIView):
         user = BlogUser.objects.filter(user = user)[0]
         imageMaxSize = round(user.imageMaxSize, 2)
         imageCurrentSize = round(user.imageCurrentSize, 2)
-        imageCount = len(Image.objects.filter(imageUser = user))
+        imageCount = len(Image.objects.filter(imageUser = user, imageVisible = True))
 
         return Response({
             'result': "success",

@@ -31,7 +31,8 @@ class ArticleImageUploadView(APIView):
                 })
         
         imageUser = BlogUser.objects.filter(user = user)[0]
-        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False)
+        # 上传的是文章里面的图片，类别是articleImage
+        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False, imageType = "articleImage")
         
         imageFileName = image.imageFile.name
         imageFileName = imageFileName.split('/')[-1]

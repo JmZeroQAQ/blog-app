@@ -41,7 +41,8 @@ class AvatarImageView(APIView):
                 })
 
         imageUser = BlogUser.objects.filter(user = user)[0]
-        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False)
+        # 上传的是头像，类别是avatar
+        image = Image.objects.create(imageUser = imageUser, imageFile = imageFile, imageName = filename, imageVisible = False, imageType = "avatar")
 
         imageFileName = image.imageFile.name
         imageFileName = imageFileName.split('/')[-1]

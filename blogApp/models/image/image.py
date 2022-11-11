@@ -14,8 +14,11 @@ def imagePath(instance, filename):
     return 'images/' + filename + "." + filetype
  
 class Image(models.Model):
+    # 图片名字
     imageName = models.CharField(max_length = 100, default = "", blank = True, null = True)
+    # 图片所属用户
     imageUser = models.ForeignKey('BlogUser', on_delete = models.CASCADE)
+    # 被装饰的图片源文件
     imageFile = models.ImageField(verbose_name = "图片地址", upload_to = imagePath)
     # 图片唯一ID
     imageId = models.BigAutoField(primary_key = True)
@@ -23,7 +26,7 @@ class Image(models.Model):
     imageCreateTime = models.DateTimeField(auto_now_add = True, blank = True, null = True)
     # 文件在图床是否显示
     imageVisible = models.BooleanField(default = True)
-    # 文件类别, 默认是normal, 首页上传的图片是homeImage
+    # 文件类别, 默认是normal, 首页上传的图片是homeImage, 头像是avatar
     imageType = models.CharField(max_length = 20, default = "normal")
     # 图片储存在本地的名字
     imageFileName = models.CharField(verbose_name = "文件名字", max_length = 128, default = "")
