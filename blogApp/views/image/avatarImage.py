@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from blogApp.models.user.user import BlogUser
 from blogApp.models.image.image import Image
 from blogApp.views.image_utils.resizeImage import resizeImage
+from blogApp.utils.clearUserArticleCache import clearUserArticleCache
 
 class AvatarImageView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -56,6 +57,9 @@ class AvatarImageView(APIView):
         imageUser.avatarUrl = str(image.imageFile.url)
         imageUser.avatarThumbnail = str(image.imageThumbnail.url)
         imageUser.save()
+
+        # 头像修改了,用户在redis缓存对应的文章全部失效
+        clearUserArticleCache(imageUser.user.username)
 
         return Response({
             'result': "success",

@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from blogApp.models.article.article import Article
+from blogApp.utils.clearArticleCache import clearArticleCache
 
 class ModifyArticleView(APIView):
     
@@ -26,7 +27,7 @@ class ModifyArticleView(APIView):
 
         article = Article.objects.filter(articleId = articleId)[0]
         
-        # identity check
+        # 身份验证
         if article.articleUser.user != user:
             return Response({
                 'result': "用户验证不通过!",
@@ -77,6 +78,8 @@ class ModifyArticleView(APIView):
                 f.close()
         
         article.save()
+        # 查看这篇文章是否在redis中，如果在，把它删除
+        clearArticleCache(articleId)
 
         return Response({
             'result': "success",

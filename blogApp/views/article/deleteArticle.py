@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from blogApp.models.article.article import Article
+from blogApp.utils.clearArticleCache import clearArticleCache
 
 class DeleteArticleView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -33,7 +34,10 @@ class DeleteArticleView(APIView):
             })
         
         article.delete()
+        # 查看这篇文章是否在redis中，如果在，把它删除
+        clearArticleCache(articleId)
 
         return Response({
             'result': "success",
         })
+

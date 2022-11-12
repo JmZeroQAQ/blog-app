@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from blogApp.models.article.article import Article
+from blogApp.utils.clearArticleCache import clearArticleCache
 
 class BatchOperateView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -24,7 +25,8 @@ class BatchOperateView(APIView):
             return Response({
                 'result': "无效的操作!",
             })
-
+        
+        # 判断一下文章Id是否合法和做一下身份验证
         for articleId in articleIdSet:
             article = Article.objects.filter(articleId = articleId)
             if article.exists():
@@ -45,18 +47,18 @@ class BatchOperateView(APIView):
                 article = article[0]
 
                 if operator == 'delete':
-                    self.deleteArticle(article = article)
+                    self.deleteArticle(article = article, articleId = articleId)
                 elif operator == 'all':
-                    self.changeArticleScope(article = article, scope = 'all')
+                    self.changeArticleScope(article = article, scope = 'all', articleId = articleId)
                 elif operator == 'self':
-                    self.changeArticleScope(article = article, scope = 'self')
+                    self.changeArticleScope(article = article, scope = 'self', articleId = articleId)
 
 
         return Response({
             'result': "success",
         })
 
-    def deleteArticle(self, article):
+    def deleteArticle(self, article, articleId):
         try:
             article.delete()
         except Exception:
@@ -65,9 +67,14 @@ class BatchOperateView(APIView):
             return Response({
                 'result': "删除文章失败!"
                 })
-
-    def changeArticleScope(self, article, scope):
-        if article.articleVisivle != scope:
+        else:
+            # 清理redis中的缓存
+            clearArticleCache(articleId)
+        
+    def changeArticleScope(self, article, scope, articleId):
+        if article.articleVisible != scope:
             article.articleVisible = scope
             article.save()
-
+            # 清理redis中的缓存
+            clearArticleCache(articleId)
+    

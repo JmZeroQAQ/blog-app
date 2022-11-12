@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from blogApp.models.user.user import BlogUser
+from blogApp.utils.clearUserArticleCache import clearUserArticleCache
 
 class SetUserInfoView(APIView):
     permission_classes = ([IsAuthenticated])
@@ -23,12 +24,13 @@ class SetUserInfoView(APIView):
             return Response({
                 'result': "非法昵称或背景!",
                 })
-
+        
         blogUser = BlogUser.objects.filter(user = user)[0]
-        user = blogUser.user
 
         if username != user.username:
             if not User.objects.filter(username = username).exists():
+                # 用户名字改变了,redis缓存里面对应的文章信息全部失效
+                clearUserArticleCache(user.username)
                 user.username = username
                 user.save()
             else:
