@@ -60,6 +60,8 @@ const add_listening_events_refresh = () => {
         error: (resp) => {
             TOKEN.access_token = "";
             TOKEN.refresh_token = "";
+            // localStorage.removeItem("refresh_token");
+            localStorage.clear();
 
             store.dispatch({type: ACTIONS.changeUserStat, newStat: 0});
         },

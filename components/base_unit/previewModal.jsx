@@ -28,7 +28,7 @@ class PreviewModal extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button onClick={this.props.handleClickStorage} className='me-md-3 col-md-2 col-12 col-sm-12 col-xs-12 article-editor-btn-storage'>保存</button>
-                                <button onClick={this.props.handleClickSubmit} className='mt-sm-2 mt-2 mt-md-0 col-12 col-md-2 col-sm-12 article-editor-btn-submit'>{this.props.mode !== 'modify' ? "保存" : "修改"}</button>
+                                <button onClick={this.props.handleClickSubmit} className='mt-sm-2 mt-2 mt-md-0 col-12 col-md-2 col-sm-12 article-editor-btn-submit'>{this.props.mode !== 'modify' ? "提交" : "修改"}</button>
                             </div>
                         </div>
                     </div>
