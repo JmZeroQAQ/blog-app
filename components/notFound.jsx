@@ -3,6 +3,12 @@ import styled from 'styled-components';
 
 class NotFound extends Component {
     state = {  } 
+
+    componentDidMount() {
+        // 设置文章列表标题
+        document.title = "404 Not Found";
+    }
+
     render() { 
         return (
             <NotFoundStyle>

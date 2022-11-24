@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import DisplayMarkDown from './displayMarkdown';
 import $ from 'jquery';
 import { TOKEN, OnTokenLoad, OnTourist } from '../token/identityToken';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { requestUrl } from '../../API/requestUrl';
 import { User, OnUserInfoLoad } from '../base_unit/User/userInfo';
 
@@ -116,7 +116,7 @@ class ArticleContent extends Component {
     }
 
     handleClickModify = () => {
-        window.location.href = `/modify/${this.props.params.article_id}`;
+        this.props.navigate(`/modify/${this.props.params.article_id}`);
     }
 
     getContent() {
@@ -144,6 +144,7 @@ class ArticleContent extends Component {
                             <hr style={{marginTop: "6px", color: "#999999"}} />
                         </div>
                         <div className="article-body">
+                            {/* 这个markdown-body是导入markdown主题用的类 */}
                             <div className="markdown-body">
                                 <DisplayMarkDown 
                                     article={this.state.content}
@@ -167,13 +168,16 @@ class ArticleContent extends Component {
     }
 }
 
-//eslint-disable-next-line
-export default (props) => (
+
+const ArticleContentWrap = (props) => (
     <ArticleContent
         {...props}
         params={useParams()}
+        navigate={useNavigate()}
     />
 );
+
+export default ArticleContentWrap;
 
 const ArticleContentStyle = styled.div.attrs(props => {
     return {

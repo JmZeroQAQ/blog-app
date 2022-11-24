@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled, {keyframes} from 'styled-components';
-import PictureModal from './picureModal';
+import PictureModal from '../base_unit/baseModal';
 
 class PicturePreview extends Component {
     state = {  

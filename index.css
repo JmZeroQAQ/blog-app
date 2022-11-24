@@ -40,6 +40,8 @@ body::-webkit-scrollbar-thumb {
 
 .markdown-body {
   font-size: 18px !important;
+  color: #333333 !important;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 
 .home-navbar {

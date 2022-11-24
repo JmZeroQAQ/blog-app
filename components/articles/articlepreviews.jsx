@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ModifyIcon from '../base_unit/modifyIcon';
 import styled from 'styled-components';
 import { User, OnUserInfoLoad } from '../base_unit/User/userInfo';
+import { useNavigate } from 'react-router-dom';
 
 class ArticlePreview extends Component {
     state = {  
@@ -75,10 +76,21 @@ class ArticlePreview extends Component {
         ev.preventDefault();
         ev.stopPropagation();
 
-        window.location.href = `/modify/${this.props.aid}`;
+        this.props.navigate(`/modify/${this.props.aid}`);
     }
 }
- 
+
+const ArticlePreviewWrap = (props) => {
+    return (
+        <ArticlePreview 
+            {...props} 
+            navigate={useNavigate()}
+        />
+    );
+};
+
+export default ArticlePreviewWrap;
+
 const PreviewStyle = styled.div`
 
     & .preview {
@@ -139,5 +151,3 @@ const PreviewStyle = styled.div`
         white-space: nowrap;
     }
 `
-
-export default ArticlePreview;

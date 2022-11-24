@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
+import $ from 'jquery';
 
 class PictureModal extends Component {
     
@@ -9,6 +10,11 @@ class PictureModal extends Component {
         this.state = {    };
         this.node = document.createElement('div');
         document.body.appendChild(this.node);
+
+        $(document.body).css({
+            'overflow-x': "hidden",
+            'overflow-y': "hidden",
+        });
     }
     
     render() { 
@@ -22,6 +28,11 @@ class PictureModal extends Component {
 
     componentWillUnmount() {
         document.body.removeChild(this.node);
+
+        $(document.body).css({
+            'overflow-x': "auto",
+            'overflow-y': "auto",
+        });
     }
 }
 
