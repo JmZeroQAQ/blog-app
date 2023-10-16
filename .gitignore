@@ -1,0 +1,9 @@
+db.sqlite3
+db.sqlite3.bak
+*.swp
+UserStorage/
+**/__pycache__
+static/
+**/static/
+media/
+
